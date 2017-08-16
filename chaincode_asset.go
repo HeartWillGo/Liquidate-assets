@@ -628,7 +628,7 @@ func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []st
 }
 
 //getUserAsset  查询用户资产
-func (t *SimpleChaincode) WriteUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("ex02 WriteUser")
 
 	var User_ID string         //用户ID
@@ -702,55 +702,47 @@ func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string
 
 	return shim.Success(nil)
 }
+
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("ex02 Invoke")
 	function, args := stub.GetFunctionAndParameters()
-	if function == "invoke" {
-		// Make payment of X units from A to B
-		return t.invoke(stub, args)
-	} else if function == "delete" {
-		// Deletes an entity from its state
-		return t.delete(stub, args)
-	} else if function == "query" {
-		// the old "Query" is now implemtned in invoke
-		return t.query(stub, args)
-	} else if function == "CreateBank" {
-		// the old "Query" is now implemtned in invoke
-		return t.CreateBank(stub, args)
-	} else if function == "CreateCompany" {
-		// the old "Query" is now implemtned in invoke
-		return t.CreateCompany(stub, args)
-	} else if function == "getBanks" {
-		// the old "Query" is now implemtned in invoke
-		return t.getBanks(stub, args)
-	} else if function == "getCenterBank" {
-		// the old "Query" is now implemtned in invoke
-		return t.getCenterBank(stub, args)
-	} else if function == "getCompanys" {
-		// the old "Query" is now implemtned in invoke
-		return t.getCompanys(stub, args)
-	} else if function == "getTransactions" {
-		// the old "Query" is now implemtned in invoke
-		return t.getTransactions(stub, args)
-	} else if function == "IssueCoin" {
-		// the old "Query" is now implemtned in invoke
-		return t.IssueCoin(stub, args)
-	} else if function == "issueCoinToBank" {
-		// the old "Query" is now implemtned in invoke
-		return t.issueCoinToBank(stub, args)
-	} else if function == "issueCoinToCp" {
-		// the old "Query" is now implemtned in invoke
-		return t.issueCoinToCp(stub, args)
-	} else if function == "transfer" {
-		// the old "Query" is now implemtned in invoke
-		return t.transfer(stub, args)
-	}
 
 	return shim.Error("Invalid invoke function name. Expecting \"invoke\" \"delete\" \"query\"")
 }
 
 // Transaction makes payment of X units from A to B
 func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	function, args := stub.GetFunctionAndParameters()
+	switch {
+
+	case function == "CreateUser":
+		return t.CreateUser(stub, args)
+	case function == "createOrganization":
+		return t.createOrganization(stub, args)
+	case function == "CreateProduct":
+		return t.CreateProduct(stub, args)
+	case function == "getTransactionByID":
+		return t.getTransactionByID(stub, args)
+	case function == "getProduct":
+		return t.getProduct(stub, args)
+	case function == "getOrganization":
+		return t.getOrganization(stub, args)
+	case function == "getUser":
+		return t.getUser(stub, args)
+	case function == "WriteUser":
+		return t.WriteUser(stub, args)
+	case function == "WriteOrganization":
+		return t.WriteOrganization(stub, args)
+	case function == "WriteProduct":
+		return t.WriteProduct(stub, args)
+
+	case function == "transation":
+		return t.transation(stub, args)
+	case function == "getUserAsset":
+		return t.getUserAsset(stub, args)
+	default:
+		fmt.Printf("function is not exist\n")
+	}
 
 	return shim.Success(nil)
 }
