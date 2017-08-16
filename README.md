@@ -1,6 +1,9 @@
+
 # Liquidate-assets
 这是一个关于资产清算的区块链智能合约，主要做机构，用户之间的清算交易。
+
 ##主要函数
+
 CreateUser #创建用户 
 CreateOrgainization #创建机构 
 CreateProduct #创建产品 
@@ -14,8 +17,11 @@ writeUser #修改用户信息
 writeOrgainization #修改机构信息 
 writeProduct #修改产品信息 
 getUserAsset #查询用户资产
+
 ##数据结构设计
+
 ###用户
+```
 ID：用户ID 
 Name: 姓名 
 IdentificationType: 证件类型 
@@ -25,20 +31,28 @@ Birthday：生日
 BankCard:银行卡号 
 PhonoNumber:手机号 
 Key: 秘钥
+```
 ###资金类
+```
 ID: 银行卡号 
 Amount: 卡上剩余金额
+```
 ###产品类
+```
 ID : 产品编号 
 ProductName: 产品名称 
 ProductType: 产品类型 
 OrganizationID:产品所属机构ID 
 Portion:产品份额
+```
 ###机构类
+```
 ID：机构ID 
 OrganizationName:机构名称 
 OrganizationType:机构类型
+```
 ###交易内容
+```
 ID：交易ID 
 Trans_type:交易类型 
 TransStatus:交易状态 
@@ -50,15 +64,19 @@ ProductID：交易产品ID
 Account:份额 
 TransDate:交易时间 
 ParentOrderNo:父订单ID
+```
 ###入链协议类
+```
 SID：业务系统ID 
 ReceiverSID:下游系统ID 
 OriginSID：来源系统ID 
 RequestSerial:来源请求流水号 
 NextRequestSerial:下游请求流水号 
 Time:入链时间
+```
 
 ##接口设计
+```
 CreateUser #创建用户 
 request 参数: 
 args[0]：用户ID 
@@ -80,6 +98,8 @@ response 参数:
 “BankCard”:”XXX”, 
 “PhonoNumber”:”XXX”, 
 “Key”:”XXX”}
+```
+```
 CreateOrgainization #创建机构 
 request 参数: 
 args[0] :机构ID 
@@ -87,6 +107,8 @@ args1 :机构名称
 args2: 机构类型 
 response 参数: 
 {” ID “:”XXX”,” OrganizationName “:”xxx”,” OrganizationType”:”xxx”}
+```
+```
 CreateProduct #创建产品 
 request 参数: 
 args[0] :产品ID 
@@ -96,6 +118,8 @@ args3:产品所属机构
 args4:产品份额 
 response 参数: 
 {” ID “:”XXX”,” ProductName “:”xxx”,” ProductType”:”xxx” ，”OrganizationID”：”xxx”，”Portion”：”xxx” }
+```
+```
 Transaction # 交易 
 request 参数 
 args[0]：交易ID 
@@ -119,6 +143,8 @@ FromID “:”XXX”,
 “ProductID “:”XXX”, 
 “Account “:”XXX”, 
 “TransDate“：”XXX“}
+```
+```
 getTransaction #获取所有交易 
 request 参数
 response 参数： 
@@ -132,6 +158,8 @@ FromID “:”XXX”,
 “ProductID “:”XXX”, 
 “Account “:”XXX”, 
 “TransDate“：”XXX“}
+```
+```
 getTransactionByID #获取某笔交易 
 request 参数 
 args[0]：交易ID 
@@ -146,16 +174,22 @@ FromID “:”XXX”,
 “ProductID “:”XXX”, 
 “Account “:”XXX”, 
 “TransDate“：”XXX“}
+```
+```
 getProduct #获取产品信息 
 request 参数: 
 args[0] :产品ID
 response 参数: 
 {” ID “:”XXX”,” ProductName “:”xxx”,” ProductType”:”xxx” ，”OrganizationID”：”xxx”，”Portion”：”xxx” }
+```
+```
 getOrganization #获取机构信息 
 request 参数: 
 args[0] :机构ID
 response 参数: 
 {” ID “:”XXX”,” OrganizationName “:”xxx”,” OrganizationType”:”xxx”}
+```
+```
 getUser #获取用户信息
 request 参数: 
 args[0]：用户ID
@@ -169,6 +203,8 @@ response 参数:
 “BankCard”:”XXX”, 
 “PhonoNumber”:”XXX” 
 }
+```
+```
 writeUser #修改用户信息 
 request 参数: 
 args[0]：用户ID 
@@ -190,6 +226,8 @@ response 参数:
 “BankCard”:”XXX”, 
 “PhonoNumber”:”XXX”, 
 “Key”:”XXX”}
+```
+```
 writeOrgainization #修改机构信息 
 request 参数: 
 args[0] :机构ID 
@@ -197,6 +235,8 @@ args1 :机构名称
 args2: 机构类型 
 response 参数: 
 {” ID “:”XXX”,” OrganizationName “:”xxx”,” OrganizationType”:”xxx”}
+```
+```
 writeProduct #修改产品信息 
 request 参数: 
 args[0] :产品ID 
@@ -206,6 +246,8 @@ args3:产品所属机构
 args4:产品份额 
 response 参数: 
 {” ID “:”XXX”,” ProductName “:”xxx”,” ProductType”:”xxx” ，”OrganizationID”：”xxx”，”Portion”：”xxx” }
+```
+```
 getUserAsset #查询用户资产 
 request 参数 
 args[0] 用户ID 
@@ -223,3 +265,4 @@ response 参数：
 ” ProductType”:”xxx” ， 
 “OrganizationID”： 
 “xxx”，”Portion”：”xxx”}
+```
