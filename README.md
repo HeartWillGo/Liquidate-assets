@@ -4,18 +4,29 @@
 
 ##主要函数
 
-CreateUser #创建用户 
-CreateOrgainization #创建机构 
+CreateUser #创建用户
+
+CreateOrgainization #创建机构
+
 CreateProduct #创建产品 
+
 Transaction # 交易 
+
 getTransaction #获取所有交易 
+
 getTransactionByID #获取某笔交易 
+
 getProduct #获取产品信息 
+
 getOrganization #获取机构信息 
 getUser #获取用户信息 
+
 writeUser #修改用户信息 
+
 writeOrgainization #修改机构信息 
+
 writeProduct #修改产品信息 
+
 getUserAsset #查询用户资产
 
 ##数据结构设计
