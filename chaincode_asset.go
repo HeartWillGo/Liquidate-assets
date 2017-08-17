@@ -612,6 +612,7 @@ func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []st
 	user.TransactionIDArray = append(TransId)
 	ProductMap = user.ProductMap
 	processArr = ProductMap[ProductID]
+
 	processArr.append(productprocess)
 	ProductMap[ProductID] = processArr
 	user.ProductMap = ProductMap
