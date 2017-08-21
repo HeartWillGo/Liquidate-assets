@@ -10,7 +10,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
@@ -22,16 +21,16 @@ type SimpleChaincode struct {
 
 //用户
 type User struct {
-	ID                 string                      `json:"id"`                 //用户ID
-	Name               string                      `json:"name"`               //用户名字
-	IdentificationType int                         `json:"identificationType"` // 证件类型
-	Identification     string                      `json:"id"`                 //证件号码
-	Sex                int                         `json:"sex"`                //性别
-	Birthday           string                      `json:"birthday"`           //生日
-	BankCard           string                      `json:"bankcard"`           //银行卡号
-	PhoneNumber        string                      `json:"phonoumber"`         //手机号
-	TransactionIDArray []string                    //存放交易ID
-	ProductMap         map[string][]ProductProcess `json:"productmap"` //产品
+	ID                 string `json:"id"`                 //用户ID
+	Name               string `json:"name"`               //用户名字
+	IdentificationType int    `json:"identificationType"` // 证件类型
+	Identification     string `json:"id"`                 //证件号码
+	Sex                int    `json:"sex"`                //性别
+	Birthday           string `json:"birthday"`           //生日
+	BankCard           string `json:"bankcard"`           //银行卡号
+	PhoneNumber        string `json:"phonoumber"`         //手机号
+
+	ProductMap map[string]Product `json:"productmap"` //产品
 }
 type ProductProcess struct {
 	ProcessType   int `json:"processtype“`   //操作类型
@@ -164,7 +163,8 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	user.PhoneNumber = PhoneNumber
 	user.Sex = Sex
 
-	user.ProductMap = make(map[string][]ProductProcess)
+	map_pro := make(map[string]Product)
+	user.ProductMap = map_pro
 
 	jsons_users, err := json.Marshal(user) //转换成JSON返回的是byte[]
 	if err != nil {
@@ -311,7 +311,7 @@ func (t *SimpleChaincode) getProduct(stub shim.ChaincodeStubInterface, args []st
 	}
 	Product_ID = args[0]
 
-	ProductInfo, err := stub.GetState(Transactin_ID)
+	ProductInfo, err := stub.GetState(Product_ID)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -540,10 +540,10 @@ func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []st
 	var ParentOrderNo string    //父订单号
 	var price int               //价格
 	var transaction Transaction //交易
-	var productprocess ProductProcess
-	var processArr []ProductProcess
+	var product Product
+
 	var user User
-	var ProductMap map[string][]ProductProcess
+	var ProductMap map[string]Product
 	if len(args) != 10 {
 		return shim.Error("Incorrect number of arguments. Expecting 5")
 	}
@@ -609,12 +609,12 @@ func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []st
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-	user.TransactionIDArray = append(TransId)
-	ProductMap = user.ProductMap
-	processArr = ProductMap[ProductID]
 
-	processArr.append(productprocess)
-	ProductMap[ProductID] = processArr
+	ProductMap = user.ProductMap
+	product = ProductMap[ProductID]
+	product.Portion = product.Portion + Account
+	ProductMap[ProductID] = product
+
 	user.ProductMap = ProductMap
 
 	jsons_User, err := json.Marshal(user) //转换成JSON返回的是byte[]
