@@ -586,9 +586,7 @@ func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []st
 	transaction.TransId = TransId
 	transaction.TransType = TransType
 
-	productprocess.ProcessType = TransType
-	productprocess.ProcessAmount = Account
-	productprocess.ProcessPrice = price
+	 
 
 	jsons_transaction, err := json.Marshal(transaction) //转换成JSON返回的是byte[]
 	if err != nil {
@@ -642,10 +640,10 @@ func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []
 	var PhoneNumber string     //手机号
 	var TransactionIDArray []string
 
-	var productprocess ProductProcess
-	var processArr []ProductProcess
+	 
+	 
 	var user User
-	var ProductMap map[string][]ProductProcess
+	var ProductMap map[string]Product
 
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments. Expecting 4")
@@ -663,20 +661,11 @@ func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []
 
 	for key, value := range ProductMap {
 		fmt.Printf("%s-%d\n", key, value)
-		var process []ProductProcess
-		process = value
-		var count int = 0
-		for j := 0; j < len(process); j++ {
-			var proce ProductProcess
+		 
 
-			if proce.ProcessType == 0 {
-				count += proce.ProcessPrice * proce.ProcessAmount
-			} else if proce.ProcessType == 1 {
-				count += proce.ProcessPrice * proce.ProcessAmount
-			}
-
+		
+		fmt.Printf("产品：", key, "产品内容：", value)
 		}
-		fmt.Printf("产品：", key, "金额：", count)
 
 	}
 
