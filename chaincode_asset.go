@@ -317,8 +317,7 @@ func (t *SimpleChaincode) getProduct(stub shim.ChaincodeStubInterface, args []st
 	}
 	//将byte的结果转换成struct
 	err = json.Unmarshal(ProductInfo, &product)
-	if err != nil
-	 {
+	if err != nil {
 		return shim.Error(err.Error())
 	}
 	fmt.Printf("  ProductInfo  = %d  \n", ProductInfo)
