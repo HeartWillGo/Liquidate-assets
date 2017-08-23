@@ -123,7 +123,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 //createUser
 func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("ex02 CreateUser")
-
+	//
 	var ID string              //用户ID
 	var Name string            //用户名字
 	var IdentificationType int // 证件类型
