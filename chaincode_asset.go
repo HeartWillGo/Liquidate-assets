@@ -585,6 +585,7 @@ func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []st
 	transaction.ToType = ToType
 	transaction.TransId = TransId
 	transaction.TransType = TransType
+	transaction.Price = price
 
 	jsons_transaction, err := json.Marshal(transaction) //转换成JSON返回的是byte[]
 	if err != nil {
@@ -628,15 +629,15 @@ func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []st
 func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("ex02 WriteUser")
 
-	var User_ID string         //用户ID
-	var Name string            //用户名字
-	var IdentificationType int // 证件类型
-	var Identification string  //证件号码
-	var Sex int                //性别
-	var Birthday string        //生日
-	var BankCard string        //银行卡号
-	var PhoneNumber string     //手机号
-	var TransactionIDArray []string
+	var User_ID string //用户ID
+	//	var Name string            //用户名字
+	//	var IdentificationType int // 证件类型
+	//	var Identification string  //证件号码
+	//	var Sex int                //性别
+	//	var Birthday string        //生日
+	//	var BankCard string        //银行卡号
+	//	var PhoneNumber string     //手机号
+	//	var TransactionIDArray []string
 
 	var user User
 	var ProductMap map[string]Product
@@ -688,13 +689,6 @@ func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("ex02 Invoke")
 	function, args := stub.GetFunctionAndParameters()
-
-	return shim.Error("Invalid invoke function name. Expecting \"invoke\" \"delete\" \"query\"")
-}
-
-// Transaction makes payment of X units from A to B
-func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	function, args := stub.GetFunctionAndParameters()
 	switch {
 
 	case function == "CreateUser":
@@ -727,6 +721,11 @@ func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string
 	}
 
 	return shim.Success(nil)
+}
+
+// Transaction makes payment of X units from A to B
+func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
 }
 
 // Deletes an entity from state
