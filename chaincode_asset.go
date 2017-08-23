@@ -317,7 +317,8 @@ func (t *SimpleChaincode) getProduct(stub shim.ChaincodeStubInterface, args []st
 	}
 	//将byte的结果转换成struct
 	err = json.Unmarshal(ProductInfo, &product)
-	if err != nil {
+	if err != nil
+	 {
 		return shim.Error(err.Error())
 	}
 	fmt.Printf("  ProductInfo  = %d  \n", ProductInfo)
@@ -544,7 +545,7 @@ func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []st
 
 	var user User
 	var ProductMap map[string]Product
-	if len(args) != 10 {
+	if len(args) != 11 {
 		return shim.Error("Incorrect number of arguments. Expecting 5")
 	}
 
@@ -716,6 +717,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.transation(stub, args)
 	case function == "getUserAsset":
 		return t.getUserAsset(stub, args)
+	case function == "query":
+		return t.query(stub, args)
 	default:
 		fmt.Printf("function is not exist\n")
 	}
