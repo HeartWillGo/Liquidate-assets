@@ -586,8 +586,6 @@ func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []st
 	transaction.TransId = TransId
 	transaction.TransType = TransType
 
-	 
-
 	jsons_transaction, err := json.Marshal(transaction) //转换成JSON返回的是byte[]
 	if err != nil {
 		return shim.Error(err.Error())
@@ -640,8 +638,6 @@ func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []
 	var PhoneNumber string     //手机号
 	var TransactionIDArray []string
 
-	 
-	 
 	var user User
 	var ProductMap map[string]Product
 
@@ -656,22 +652,18 @@ func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []
 	}
 	//将byte的结果转换成struct
 	err = json.Unmarshal(UserInfo, &user)
-
+	if err != nil {
+		return shim.Error(err.Error())
+	}
 	ProductMap = user.ProductMap
 
 	for key, value := range ProductMap {
 		fmt.Printf("%s-%d\n", key, value)
-		 
 
-		
 		fmt.Printf("产品：", key, "产品内容：", value)
-		}
 
 	}
 
-	if err != nil {
-		return shim.Error(err.Error())
-	}
 	fmt.Printf(" CeateBank success \n")
 	return shim.Success(nil)
 }
