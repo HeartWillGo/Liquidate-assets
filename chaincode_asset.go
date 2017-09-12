@@ -119,6 +119,50 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
 	return shim.Success(nil)
 }
+func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
+	fmt.Println("ex02 Invoke")
+	function, args := stub.GetFunctionAndParameters()
+	if function != "invoke" {
+		return shim.Error("Unknown function call")
+	}
+	if len(args) < 2 {
+		return shim.Error("Incorrect number of arguments. Expecting at least 2")
+	}
+	switch {
+
+	case args[0] == "CreateUser":
+		return t.CreateUser(stub, args)
+	case args[0] == "createOrganization":
+		return t.createOrganization(stub, args)
+	case args[0] == "CreateProduct":
+		return t.CreateProduct(stub, args)
+	case args[0] == "getTransactionByID":
+		return t.getTransactionByID(stub, args)
+	case args[0] == "getProduct":
+		return t.getProduct(stub, args)
+	case args[0] == "getOrganization":
+		return t.getOrganization(stub, args)
+	case args[0] == "getUser":
+		return t.getUser(stub, args)
+	case args[0] == "WriteUser":
+		return t.WriteUser(stub, args)
+	case args[0] == "WriteOrganization":
+		return t.WriteOrganization(stub, args)
+	case args[0] == "WriteProduct":
+		return t.WriteProduct(stub, args)
+
+	case args[0] == "transation":
+		return t.transation(stub, args)
+	case args[0] == "getUserAsset":
+		return t.getUserAsset(stub, args)
+	case args[0] == "query":
+		return t.query(stub, args)
+	default:
+		fmt.Printf("function is not exist\n")
+	}
+
+	return shim.Error("Unknown action,")
+}
 
 //createUser
 func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
@@ -135,24 +179,24 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 
 	var user User
 
-	if len(args) != 8 {
+	if len(args) != 9 {
 		return shim.Error("Incorrect number of arguments. Expecting 8")
 	}
 
-	ID = args[0]
-	Name = args[1]
-	IdentificationType, err = strconv.Atoi(args[2])
+	ID = args[1]
+	Name = args[2]
+	IdentificationType, err = strconv.Atoi(args[3])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：TotalNumber ")
 	}
-	Identification = args[3]
-	Sex, err = strconv.Atoi(args[4])
+	Identification = args[4]
+	Sex, err = strconv.Atoi(args[5])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：TotalNumber ")
 	}
-	Birthday = args[5]
-	BankCard = args[6]
-	PhoneNumber = args[7]
+	Birthday = args[6]
+	BankCard = args[7]
+	PhoneNumber = args[8]
 
 	user.ID = ID
 	user.BankCard = BankCard
@@ -172,7 +216,7 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	}
 
 	// Write the state to the ledger
-	err = stub.PutState(args[0], jsons_users)
+	err = stub.PutState(args[1], jsons_users)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -189,15 +233,15 @@ func (t *SimpleChaincode) createOrganization(stub shim.ChaincodeStubInterface, a
 	var OrganizationType int       //机构类型
 	var oragnization Oraganization //机构
 
-	if len(args) != 3 {
+	if len(args) != 4 {
 		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
 
 	// Initialize the chaincode
-	OrganizationID = args[0]
-	OrganizationName = args[1]
+	OrganizationID = args[1]
+	OrganizationName = args[2]
 
-	OrganizationType, err = strconv.Atoi(args[2])
+	OrganizationType, err = strconv.Atoi(args[3])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
@@ -210,7 +254,7 @@ func (t *SimpleChaincode) createOrganization(stub shim.ChaincodeStubInterface, a
 		return shim.Error(err.Error())
 	}
 	// Write the state to the ledger
-	err = stub.PutState(args[0], jsons_organization)
+	err = stub.PutState(args[1], jsons_organization)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -232,25 +276,25 @@ func (t *SimpleChaincode) CreateProduct(stub shim.ChaincodeStubInterface, args [
 	var Price int             //价格
 	var product Product
 
-	if len(args) != 6 {
+	if len(args) != 7 {
 		return shim.Error("Incorrect number of arguments. Expecting 6")
 	}
 
-	ProductID = args[0]
-	ProductName, err = strconv.Atoi(args[1])
+	ProductID = args[1]
+	ProductName, err = strconv.Atoi(args[2])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
-	ProductType, err = strconv.Atoi(args[2])
+	ProductType, err = strconv.Atoi(args[3])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
-	OrganizationID = args[3]
-	Portion, err = strconv.Atoi(args[4])
+	OrganizationID = args[4]
+	Portion, err = strconv.Atoi(args[5])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
-	Price, err = strconv.Atoi(args[5])
+	Price, err = strconv.Atoi(args[6])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
@@ -266,7 +310,7 @@ func (t *SimpleChaincode) CreateProduct(stub shim.ChaincodeStubInterface, args [
 		return shim.Error(err.Error())
 	}
 	// Write the state to the ledger
-	err = stub.PutState(args[0], jsons_product)
+	err = stub.PutState(args[1], jsons_product)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -281,10 +325,10 @@ func (t *SimpleChaincode) getTransactionByID(stub shim.ChaincodeStubInterface, a
 
 	var Transactin_ID string //交易ID
 	var transaction Transaction
-	if len(args) != 1 {
+	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
-	Transactin_ID = args[0]
+	Transactin_ID = args[1]
 
 	TransactionInfo, err := stub.GetState(Transactin_ID)
 	if err != nil {
@@ -306,10 +350,10 @@ func (t *SimpleChaincode) getProduct(stub shim.ChaincodeStubInterface, args []st
 
 	var Product_ID string //产品ID
 	var product Product
-	if len(args) != 1 {
+	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
-	Product_ID = args[0]
+	Product_ID = args[1]
 
 	ProductInfo, err := stub.GetState(Product_ID)
 	if err != nil {
@@ -331,13 +375,13 @@ func (t *SimpleChaincode) getOrganization(stub shim.ChaincodeStubInterface, args
 	var Organization_ID string // 商业银行ID
 	var organization Oraganization
 
-	if len(args) != 1 {
+	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
 	// Initialize the chaincode
 
-	Organization_ID = args[0]
+	Organization_ID = args[1]
 
 	OrganizationInfo, err := stub.GetState(Organization_ID)
 	if err != nil {
@@ -360,13 +404,13 @@ func (t *SimpleChaincode) getUser(stub shim.ChaincodeStubInterface, args []strin
 	var User_ID string // 用户ID
 	var user User
 
-	if len(args) != 1 {
+	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
 	// Initialize the chaincode
 
-	User_ID = args[0]
+	User_ID = args[1]
 	userinfo, err := stub.GetState(User_ID)
 	if err != nil {
 		return shim.Error(err.Error())
@@ -393,24 +437,24 @@ func (t *SimpleChaincode) WriteUser(stub shim.ChaincodeStubInterface, args []str
 	var PhoneNumber string     //手机号
 	var user User
 
-	if len(args) != 8 {
+	if len(args) != 9 {
 		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
 
-	ID = args[0]
-	Name = args[1]
-	IdentificationType, err = strconv.Atoi(args[2])
+	ID = args[1]
+	Name = args[2]
+	IdentificationType, err = strconv.Atoi(args[3])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：TotalNumber ")
 	}
-	Identification = args[3]
-	Sex, err = strconv.Atoi(args[4])
+	Identification = args[4]
+	Sex, err = strconv.Atoi(args[5])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：TotalNumber ")
 	}
-	Birthday = args[5]
-	BankCard = args[6]
-	PhoneNumber = args[7]
+	Birthday = args[6]
+	BankCard = args[7]
+	PhoneNumber = args[8]
 
 	user.ID = ID
 	user.BankCard = BankCard
@@ -427,7 +471,7 @@ func (t *SimpleChaincode) WriteUser(stub shim.ChaincodeStubInterface, args []str
 	}
 
 	// Write the state to the ledger
-	err = stub.PutState(args[0], jsons_users)
+	err = stub.PutState(args[1], jsons_users)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -444,15 +488,15 @@ func (t *SimpleChaincode) WriteOrganization(stub shim.ChaincodeStubInterface, ar
 	var OrganizationType int       //机构类型
 	var oragnization Oraganization //机构
 
-	if len(args) != 3 {
+	if len(args) != 4 {
 		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
 
 	// Initialize the chaincode
-	OrganizationID = args[0]
-	OrganizationName = args[1]
+	OrganizationID = args[1]
+	OrganizationName = args[2]
 
-	OrganizationType, err = strconv.Atoi(args[2])
+	OrganizationType, err = strconv.Atoi(args[3])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
@@ -465,7 +509,7 @@ func (t *SimpleChaincode) WriteOrganization(stub shim.ChaincodeStubInterface, ar
 		return shim.Error(err.Error())
 	}
 	// Write the state to the ledger
-	err = stub.PutState(args[0], jsons_organization)
+	err = stub.PutState(args[1], jsons_organization)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -486,21 +530,21 @@ func (t *SimpleChaincode) WriteProduct(stub shim.ChaincodeStubInterface, args []
 	var Portion int           //产品份额
 	var product Product
 
-	if len(args) != 5 {
+	if len(args) != 6 {
 		return shim.Error("Incorrect number of arguments. Expecting 5")
 	}
 
-	ProductID = args[0]
-	ProductName, err = strconv.Atoi(args[1])
+	ProductID = args[1]
+	ProductName, err = strconv.Atoi(args[2])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
-	ProductType, err = strconv.Atoi(args[2])
+	ProductType, err = strconv.Atoi(args[3])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
-	OrganizationID = args[3]
-	Portion, err = strconv.Atoi(args[4])
+	OrganizationID = args[4]
+	Portion, err = strconv.Atoi(args[5])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
@@ -515,7 +559,7 @@ func (t *SimpleChaincode) WriteProduct(stub shim.ChaincodeStubInterface, args []
 		return shim.Error(err.Error())
 	}
 	// Write the state to the ledger
-	err = stub.PutState(args[0], jsons_product)
+	err = stub.PutState(args[1], jsons_product)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -544,33 +588,33 @@ func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []st
 
 	var user User
 	var ProductMap map[string]Product
-	if len(args) != 11 {
+	if len(args) != 12 {
 		return shim.Error("Incorrect number of arguments. Expecting 5")
 	}
 
-	TransId = args[0]
-	TransType, err = strconv.Atoi(args[1])
+	TransId = args[1]
+	TransType, err = strconv.Atoi(args[2])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
-	FromType, err = strconv.Atoi(args[2])
+	FromType, err = strconv.Atoi(args[3])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
-	FromID = args[3]
-	ToType, err = strconv.Atoi(args[4])
+	FromID = args[4]
+	ToType, err = strconv.Atoi(args[5])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
-	ToID = args[5]
-	Time = args[6]
-	ProductID = args[7]
-	Account, err = strconv.Atoi(args[8])
+	ToID = args[6]
+	Time = args[7]
+	ProductID = args[8]
+	Account, err = strconv.Atoi(args[9])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
-	ParentOrderNo = args[9]
-	price, err = strconv.Atoi(args[10])
+	ParentOrderNo = args[10]
+	price, err = strconv.Atoi(args[11])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
@@ -642,11 +686,11 @@ func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []
 	var user User
 	var ProductMap map[string]Product
 
-	if len(args) != 1 {
+	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
 
-	User_ID = args[0]
+	User_ID = args[1]
 	UserInfo, err := stub.GetState(User_ID)
 	if err != nil {
 		return shim.Error(err.Error())
@@ -671,55 +715,16 @@ func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []
 
 // Deletes an entity from state
 func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) != 1 {
+	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	A := args[0]
+	A := args[1]
 
 	// Delete the key from the state in ledger
 	err := stub.DelState(A)
 	if err != nil {
 		return shim.Error("Failed to delete state")
-	}
-
-	return shim.Success(nil)
-}
-
-func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
-	fmt.Println("ex02 Invoke")
-	function, args := stub.GetFunctionAndParameters()
-	switch {
-
-	case function == "CreateUser":
-		return t.CreateUser(stub, args)
-	case function == "createOrganization":
-		return t.createOrganization(stub, args)
-	case function == "CreateProduct":
-		return t.CreateProduct(stub, args)
-	case function == "getTransactionByID":
-		return t.getTransactionByID(stub, args)
-	case function == "getProduct":
-		return t.getProduct(stub, args)
-	case function == "getOrganization":
-		return t.getOrganization(stub, args)
-	case function == "getUser":
-		return t.getUser(stub, args)
-	case function == "WriteUser":
-		return t.WriteUser(stub, args)
-	case function == "WriteOrganization":
-		return t.WriteOrganization(stub, args)
-	case function == "WriteProduct":
-		return t.WriteProduct(stub, args)
-
-	case function == "transation":
-		return t.transation(stub, args)
-	case function == "getUserAsset":
-		return t.getUserAsset(stub, args)
-	case function == "query":
-		return t.query(stub, args)
-	default:
-		fmt.Printf("function is not exist\n")
 	}
 
 	return shim.Success(nil)
@@ -732,11 +737,11 @@ func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string)
 	var A string // Entities
 	var err error
 
-	if len(args) != 1 {
+	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting name of the person to query")
 	}
 
-	A = args[0]
+	A = args[1]
 
 	// Get the state from the ledger
 	Avalbytes, erro := stub.GetState(A)
