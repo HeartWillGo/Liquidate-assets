@@ -84,39 +84,9 @@ var err error
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("ex02 Init")
 	_, args := stub.GetFunctionAndParameters()
-	var OrganizationID string      //机构id
-	var OrganizationName string    //机构名称
-	var OrganizationType int       //机构类型
-	var oragnization Oraganization //机构
-
-	if len(args) != 3 {
-		return shim.Error("Incorrect number of arguments. Expecting 3")
+	if len(args) != 0 {
+	return shim.Error("Incorrect number of arguments. Expecting 0")
 	}
-
-	// Initialize the chaincode
-	OrganizationID = args[0]
-	OrganizationName = args[1]
-
-	OrganizationType, err = strconv.Atoi(args[2])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding：Number ")
-	}
-	oragnization.OrganizationID = OrganizationID
-	oragnization.OrganizationName = OrganizationName
-	oragnization.OrganizationType = OrganizationType
-
-	jsons_organization, err := json.Marshal(oragnization) //转换成JSON返回的是byte[]
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	// Write the state to the ledger
-	err = stub.PutState(args[0], jsons_organization)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-
-	fmt.Printf("CreateOrganization \n", jsons_organization)
-
 	return shim.Success(nil)
 }
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
