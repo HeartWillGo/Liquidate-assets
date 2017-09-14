@@ -18,13 +18,17 @@ import (
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
 }
+type IdType struct {
+	idtype   string   `json:"idtype"`   //idtype
+	idstring []string `json:"idstring"` //idstring
+}
 
 //用户
 type User struct {
 	ID                 string `json:"id"`                 //用户ID
 	Name               string `json:"name"`               //用户名字
 	IdentificationType int    `json:"identificationType"` // 证件类型
-	Identification     string `json:"id"`                 //证件号码
+	Identification     string `json:"identification"`     //证件号码
 	Sex                int    `json:"sex"`                //性别
 	Birthday           string `json:"birthday"`           //生日
 	BankCard           string `json:"bankcard"`           //银行卡号
@@ -85,7 +89,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("ex02 Init")
 	_, args := stub.GetFunctionAndParameters()
 	if len(args) != 0 {
-	return shim.Error("Incorrect number of arguments. Expecting 0")
+		return shim.Error("Incorrect number of arguments. Expecting 0")
 	}
 	return shim.Success(nil)
 }
@@ -148,6 +152,7 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	var PhoneNumber string     //手机号
 
 	var user User
+	var idtype IdType
 
 	if len(args) != 9 {
 		return shim.Error("Incorrect number of arguments. Expecting 8")
@@ -181,6 +186,34 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	user.ProductMap = map_pro
 
 	jsons_users, err := json.Marshal(user) //转换成JSON返回的是byte[]
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	IdtypeInfo, err := stub.GetState(1)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	if IdtypeInfo == nil {
+		idtype.idtype = 1
+		idtype.idstring = append(user.ID)
+
+	} else {
+		err = json.Unmarshal(IdtypeInfo, &idtype)
+		if err != nil {
+			return shim.Error(err.Error())
+		} else {
+			idtype.idtype = 1
+			idtype.idstring = append(user.ID)
+		}
+	}
+
+	jsons_idtype, err := json.Marshal(idtype) //转换成JSON返回的是byte[]
+	//将byte的结果转换成struct
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	err = stub.PutState(1, jsons_idtype)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
