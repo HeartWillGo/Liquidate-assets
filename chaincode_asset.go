@@ -357,6 +357,51 @@ func (t *SimpleChaincode) getUserProductogOrg(stub shim.ChaincodeStubInterface, 
 
 }
 
+//用户查询某机构下的交易情况
+func (t *SimpleChaincode) getUserProductogOrg(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("ex02 WriteUser")
+
+	var userid string //用户ID
+	var org_id string //用户ID
+	var user User
+	var trans map[string]Transaction
+
+	if len(args) != 3 {
+		return shim.Error("getUserProductogOrg number of arguments. Expecting 3")
+	}
+
+	userid = args[1]
+	org_id = args[2]
+	UserInfo, err := stub.GetState(userid)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	if UserInfo != nil {
+		//将byte的结果转换成struct
+		err = json.Unmarshal(UserInfo, &user)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		trans = user.TransactionMap
+		map_trans_org := make(map[string]Transaction)
+		for key, value := range trans {
+			fmt.Printf("%s-%d\n", key, value)
+
+			fmt.Printf("ID：", key, "交易内容：", value)
+			if value.OrganizationID == org_id {
+				map_trans_org[key] = value
+			}
+
+		}
+
+		fmt.Printf(" CeateBank success \n")
+		return shim.Success(map_trans_org)
+
+	}
+	return shim.Success(nil)
+
+}
+
 //createOrganization
 func (t *SimpleChaincode) createOrganization(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("ex02 createOrganization")
