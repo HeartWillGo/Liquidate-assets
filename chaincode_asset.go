@@ -13,14 +13,11 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
+	"bytes"
 )
 
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
-}
-type IdType struct {
-	idtype   string   `json:"idtype"`   //idtype
-	idstring []string `json:"idstring"` //idstring
 }
 
 //用户
@@ -35,11 +32,11 @@ type User struct {
 	PhoneNumber        string `json:"phonoumber"`         //手机号
 	Token              string `json:"token"`              //密钥
 
-	ProductMap     map[string]Product     `json:"productmap"`     //产品
-	TransactionMap map[string]Transaction `json:"transactionmap"` //交易
+	ProductList     []string   `json:"productlist"`     //产品
+	TransactionList []string   `json:"transactionlist"` //交易
 }
 type ProductProcess struct {
-	ProcessType   int `json:"processtype“`   //操作类型
+	ProcessType   int `json:"processtype"`   //操作类型
 	ProcessAmount int `json:"processamount"` //操作份额
 	ProcessPrice  int `json:"ProcessPrice"`  //价格
 }
@@ -59,14 +56,16 @@ type Product struct {
 	OrganizationID string `json:"organizationid"` //产品所属机构id
 	Portion        int    `json:"portion"`        //产品份额
 	Price          int    `json:"price"`          //单价
+	UserList       []string `json:"userlist"`
 
 }
 
 //机构
-type Oraganization struct {
+type Organizaton struct {
 	OrganizationID   string `json:"organizationid"`   //机构id
 	OrganizationName string `json:"organizationname"` //机构名称
 	OrganizationType int    `json:"organizationtype"` //机构类型
+	ProductList  	  []string `json:"productlist"`
 
 }
 
@@ -185,7 +184,8 @@ func (t *SimpleChaincode) getUserProduct(stub shim.ChaincodeStubInterface, args 
 
 	var userid string //用户ID
 	var user User
-	var ProductMap map[string]Product
+	var product Product
+	var buffer bytes.Buffer
 
 	if len(args) != 2 {
 		return shim.Error("getUserProduct：Incorrect number of arguments. Expecting 2")
@@ -196,23 +196,36 @@ func (t *SimpleChaincode) getUserProduct(stub shim.ChaincodeStubInterface, args 
 	if err != nil {
 		return shim.Error(err.Error())
 	}
+
 	if UserInfo != nil {
 		//将byte的结果转换成struct
 		err = json.Unmarshal(UserInfo, &user)
 		if err != nil {
 			return shim.Error(err.Error())
 		}
-		ProductMap = user.ProductMap
+		buffer.WriteString("{")
+		bArrayMemberAlreadyWritten := false
 
-		for key, value := range ProductMap {
+		for key, value := range user.ProductList {
+			productbytes, err := stub.GetState(value)
+			if err != nil {
+				return shim.Error("cannot find the "+value)
+			}
+			if bArrayMemberAlreadyWritten == true {
+				buffer.WriteString(",")
+			}
+			buffer.WriteString(string(productbytes))
+
 			fmt.Printf("%s-%d\n", key, value)
 
 			fmt.Printf("产品：", key, "产品内容：", value)
+			bArrayMemberAlreadyWritten = true
 
 		}
+		buffer.WriteString("}")
 
 		fmt.Printf(" CeateBank success \n")
-		return shim.Success(ProductMap)
+		return shim.Success(buffer.Bytes())
 
 	}
 	return shim.Success(nil)
@@ -234,7 +247,6 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	var token string           //密钥
 
 	var user User
-	var idtype IdType
 
 	if len(args) != 10 {
 		return shim.Error("CreateUser：Incorrect number of arguments. Expecting 10")
@@ -265,46 +277,18 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	user.PhoneNumber = PhoneNumber
 	user.Sex = Sex
 	user.Token = token
-	map_pro := make(map[string]Product)
-	map_transaction := make(map[string]Transaction)
-	user.ProductMap = map_pro
-	user.TransactionMap = map_transaction
 
 	jsons_users, err := json.Marshal(user) //转换成JSON返回的是byte[]
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-
-	//	IdtypeInfo, err := stub.GetState(1)
-	//	if err != nil {
-	//		return shim.Error(err.Error())
-	//	}
-	//	if IdtypeInfo == nil {
-	//		idtype.idtype = 1
-	//		idtype.idstring = append(user.ID)
-
-	//	} else {
-	//		err = json.Unmarshal(IdtypeInfo, &idtype)
-	//		if err != nil {
-	//			return shim.Error(err.Error())
-	//		} else {
-	//			idtype.idtype = 1
-	//			idtype.idstring = append(user.ID)
-	//		}
-	//	}
-
-	//jsons_idtype, err := json.Marshal(idtype) //转换成JSON返回的是byte[]
-	//将byte的结果转换成struct
-	//	if err != nil {
-	//		return shim.Error(err.Error())
-	//	}
-	//	err = stub.PutState(1, jsons_idtype)
-	//	if err != nil {
-	//		return shim.Error(err.Error())
-	//	}
-
-	// Write the state to the ledger
-	err = stub.PutState(args[1], jsons_users)
+	userbytes, err := stub.GetState(ID)
+	if err != nil {
+		return shim.Error("failed to return userbytes")
+	} else  if userbytes != nil {
+		return shim.Error(ID + "already have")
+	}
+	err = stub.PutState(ID, jsons_users)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -319,43 +303,52 @@ func (t *SimpleChaincode) getUserProductogOrg(stub shim.ChaincodeStubInterface, 
 	var userid string //用户ID
 	var org_id string //用户ID
 	var user User
-	var ProductMap map[string]Product
-
+	var buffer bytes.Buffer
+	var product Product
+	
 	if len(args) != 3 {
 		return shim.Error("getUserProductogOrg number of arguments. Expecting 3")
 	}
 
 	userid = args[1]
 	org_id = args[2]
+
+
+
 	UserInfo, err := stub.GetState(userid)
 	if err != nil {
 		return shim.Error(err.Error())
+	} else if UserInfo == nil {
+		return shim.Error(string(UserInfo) + "is not exists")
 	}
-	if UserInfo != nil {
-		//将byte的结果转换成struct
-		err = json.Unmarshal(UserInfo, &user)
+	buffer.WriteString("{")
+	bArrayMemberAlreadyWritten := false
+	
+	for key, value := range user.ProductList {
+		productbytes, err := stub.GetState(value)
 		if err != nil {
-			return shim.Error(err.Error())
+			return shim.Error("cannot find the " + value)
 		}
-		ProductMap = user.ProductMap
-		map_product_org := make(map[string]Product)
-		for key, value := range ProductMap {
-			fmt.Printf("%s-%d\n", key, value)
+		json.Unmarshal(productbytes, &product)
+		if product.OrganizationID == org_id {
 
-			fmt.Printf("产品：", key, "产品内容：", value)
-			if value.OrganizationID == org_id {
-				map_product_org[key] = value
+			if bArrayMemberAlreadyWritten == true {
+				buffer.WriteString(",")
 			}
-
+			buffer.WriteString(string(productbytes))
+			bArrayMemberAlreadyWritten = true
 		}
+		fmt.Printf("%s-%d\n", key, value)
 
-		fmt.Printf(" CeateBank success \n")
-		return shim.Success(map_product_org)
+		fmt.Printf("产品：", key, "产品内容：", value)
 
 	}
-	return shim.Success(nil)
+	
+	return shim.Success(buffer.Bytes())
 
 }
+
+
 
 //createOrganization
 func (t *SimpleChaincode) createOrganization(stub shim.ChaincodeStubInterface, args []string) pb.Response {
@@ -364,7 +357,7 @@ func (t *SimpleChaincode) createOrganization(stub shim.ChaincodeStubInterface, a
 	var OrganizationID string      //机构id
 	var OrganizationName string    //机构名称
 	var OrganizationType int       //机构类型
-	var oragnization Oraganization //机构
+	var organization Organizaton //机构
 
 	if len(args) != 4 {
 		return shim.Error("Incorrect number of arguments. Expecting 3")
@@ -378,13 +371,20 @@ func (t *SimpleChaincode) createOrganization(stub shim.ChaincodeStubInterface, a
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
-	oragnization.OrganizationID = OrganizationID
-	oragnization.OrganizationName = OrganizationName
-	oragnization.OrganizationType = OrganizationType
+	organization.OrganizationID = OrganizationID
+	organization.OrganizationName = OrganizationName
+	organization.OrganizationType = OrganizationType
 
-	jsons_organization, err := json.Marshal(oragnization) //转换成JSON返回的是byte[]
+	jsons_organization, err := json.Marshal(organization) //转换成JSON返回的是byte[]
 	if err != nil {
 		return shim.Error(err.Error())
+	}
+	
+	orginfo, err := stub.GetState(OrganizationID)
+	if err != nil {
+		return shim.Error("failed to get orginfo")
+	} else if orginfo != nil {
+		return shim.Error(string(orginfo) + "\t is already exists")
 	}
 	// Write the state to the ledger
 	err = stub.PutState(args[1], jsons_organization)
@@ -394,7 +394,7 @@ func (t *SimpleChaincode) createOrganization(stub shim.ChaincodeStubInterface, a
 
 	fmt.Printf("CreateOrganization \n", jsons_organization)
 
-	return shim.Success(nil)
+	return shim.Success(bytes("success put the organization to the hyperledger"))
 }
 
 //createProduct 创建产品
@@ -442,12 +442,42 @@ func (t *SimpleChaincode) CreateProduct(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return shim.Error(err.Error())
 	}
+	
+	productinfo, err := stub.GetState(ProductID)
+	if err != nil {
+		return shim.Error("failed to get productID")
+	} else if productinfo != nil {
+		return shim.Error(string(productinfo) + "\t already exists")
+	}
+	
 	// Write the state to the ledger
 	err = stub.PutState(args[1], jsons_product)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-
+	
+	
+	//在机构结构中添加产品ID
+	var organization Organizaton
+	//取出机构结构体
+	orginfo, err := stub.GetState(OrganizationID)
+	if err != nil {
+		return shim.Error("failed to get the orginfo")
+	} else if orginfo == nil {
+		return shim.Error("does not exists") 
+	}
+	json.Unmarshal(orginfo, &organization)
+	//更改机构结构体
+	organization.ProductList = append(organization.ProductList, OrganizationID)
+	orginfo_add_product, err := json.Marshal(organization)
+	if err != nil {
+		shim.Error("failed to marshal orginfo")
+	}
+	//存入更改后的结构体
+	err = stub.PutState(orginfo_add_product)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
 	fmt.Printf(" CreateProduct success \n", jsons_product)
 	return shim.Success(nil)
 }
@@ -474,7 +504,7 @@ func (t *SimpleChaincode) getTransactionByID(stub shim.ChaincodeStubInterface, a
 	}
 	fmt.Printf("  TransactionInfo  = %d  \n", TransactionInfo)
 
-	return shim.Success(nil)
+	return shim.Success(TransactionInfo)
 }
 
 //getProduct 获取产品信息
@@ -498,7 +528,7 @@ func (t *SimpleChaincode) getProduct(stub shim.ChaincodeStubInterface, args []st
 		return shim.Error(err.Error())
 	}
 	fmt.Printf("  ProductInfo  = %d  \n", ProductInfo)
-	return shim.Success(nil)
+	return shim.Success(ProductInfo)
 }
 
 //getOrganization 获取机构信息
@@ -506,7 +536,7 @@ func (t *SimpleChaincode) getOrganization(stub shim.ChaincodeStubInterface, args
 	fmt.Println("ex02 getOrganization")
 
 	var Organization_ID string // 商业银行ID
-	var organization Oraganization
+	var organization Organizaton
 
 	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
@@ -527,7 +557,7 @@ func (t *SimpleChaincode) getOrganization(stub shim.ChaincodeStubInterface, args
 	}
 	fmt.Printf("  OrganizationInfo  = %d  \n", OrganizationInfo)
 
-	return shim.Success(nil)
+	return shim.Success(OrganizationInfo)
 }
 
 //getUser 获取用户信息
@@ -553,10 +583,10 @@ func (t *SimpleChaincode) getUser(stub shim.ChaincodeStubInterface, args []strin
 
 	fmt.Printf("  userinfo  = %d  \n", userinfo)
 
-	return shim.Success(nil)
+	return shim.Success(userinfo)
 }
 
-//writeUser  修改用户信息
+//writeUser  修改用户信息,全部更改?
 func (t *SimpleChaincode) WriteUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("ex02 WriteUser")
 
@@ -568,8 +598,17 @@ func (t *SimpleChaincode) WriteUser(stub shim.ChaincodeStubInterface, args []str
 	var Birthday string        //生日
 	var BankCard string        //银行卡号
 	var PhoneNumber string     //手机号
-	var user User
 
+	
+	// check if user 
+	var user User
+	userinfo , err := stub.GetState(ID) 
+	if err != nil {
+		return shim.Error("failed to get userinfo")
+	}	else if userinfo == nil {
+		return shim.Error("you should first create user!!!")
+	}
+	json.Unmarshal(userinfo, &user)
 	if len(args) != 9 {
 		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
@@ -602,7 +641,7 @@ func (t *SimpleChaincode) WriteUser(stub shim.ChaincodeStubInterface, args []str
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-
+	
 	// Write the state to the ledger
 	err = stub.PutState(args[1], jsons_users)
 	if err != nil {
@@ -619,8 +658,8 @@ func (t *SimpleChaincode) WriteOrganization(stub shim.ChaincodeStubInterface, ar
 	var OrganizationID string      //机构id
 	var OrganizationName string    //机构名称
 	var OrganizationType int       //机构类型
-	var oragnization Oraganization //机构
-
+	
+	
 	if len(args) != 4 {
 		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
@@ -633,11 +672,26 @@ func (t *SimpleChaincode) WriteOrganization(stub shim.ChaincodeStubInterface, ar
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
-	oragnization.OrganizationID = OrganizationID
-	oragnization.OrganizationName = OrganizationName
-	oragnization.OrganizationType = OrganizationType
 
-	jsons_organization, err := json.Marshal(oragnization) //转换成JSON返回的是byte[]
+	//check org if exists
+	var organization Organizaton
+
+	orginfo , err := stub.GetState(OrganizationID)
+	if err != nil {
+		return shim.Error("failed to get org info")
+	} else if orginfo == nil {
+		return shim.Error("org is not exists")
+	}
+
+	err = json.Unmarshal(orginfo, &organization)
+	if err != nil {
+		return shim.Error("cannot marshal orgazation")
+	}
+	organization.OrganizationID = OrganizationID
+	organization.OrganizationName = OrganizationName
+	organization.OrganizationType = OrganizationType
+
+	jsons_organization, err := json.Marshal(organization) //转换成JSON返回的是byte[]
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -681,6 +735,14 @@ func (t *SimpleChaincode) WriteProduct(stub shim.ChaincodeStubInterface, args []
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
+	productinfo , err := stub.GetState(ProductID)
+	if err != nil {
+		return shim.Error("failed to get productinfo")
+	} else if productinfo == nil {
+		return shim.Error("product not exists")
+	}
+	err = json.Unmarshal(productinfo, &product)
+
 	product.ProductID = ProductID
 	product.ProductName = ProductName
 	product.ProductType = ProductType
@@ -701,7 +763,7 @@ func (t *SimpleChaincode) WriteProduct(stub shim.ChaincodeStubInterface, args []
 	return shim.Success(nil)
 }
 
-//Transation交易
+//Transation交易 我糊涂了，不知道该如何写了
 func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("ex02 Transation交易")
 
@@ -751,6 +813,13 @@ func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []st
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding：Number ")
 	}
+	// Check if transid exists in the ledger
+	transinfo, err := stub.GetState(TransId)
+	if err != nil {
+		return shim.Error("failed to get traninfo")
+	} else if transinfo != nil  {
+		return shim.Error("trans already exists")
+	}
 
 	transaction.Account = Account
 	transaction.FromID = FromID
@@ -768,6 +837,8 @@ func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []st
 	if err != nil {
 		return shim.Error(err.Error())
 	}
+
+
 	// Write the state to the ledger
 	err = stub.PutState(TransId, jsons_transaction)
 	if err != nil {
@@ -783,8 +854,10 @@ func (t *SimpleChaincode) transation(stub shim.ChaincodeStubInterface, args []st
 	if err != nil {
 		return shim.Error(err.Error())
 	}
+	//该交易加入到对应的user中
+	//该交易加入到对应的机构中
+	//该交易加入对应的product中
 
-	ProductMap = user.ProductMap
 	product = ProductMap[ProductID]
 	product.Portion = product.Portion + Account
 	ProductMap[ProductID] = product
