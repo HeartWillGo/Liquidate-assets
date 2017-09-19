@@ -25,6 +25,7 @@ import (
 	"encoding/json"
 	"bytes"
 	"strconv"
+	asset "github.com/Liquidate-assets/liquidAsset"
 )
 ////交易内容
 //type Transaction struct {
@@ -103,7 +104,7 @@ func checkInvoke(t *testing.T, stub *shim.MockStub, args [][]byte) {
 }
 
 func TestInit(t *testing.T) {
-	scc := new(SimpleChaincode)
+	scc := new(asset.SimpleChaincode)
 	stub := shim.NewMockStub("ex05", scc)
 
 	str0 := `this we arrive the init function`
