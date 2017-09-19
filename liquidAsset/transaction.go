@@ -80,7 +80,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 		return shim.Error(err.Error())
 	}
 
-	NameIndexKey, err := stub.CreateCompositeKey("TransactionObject", []string{,transaction.Fromid,transaction.Transactionid})
+	NameIndexKey, err := stub.CreateCompositeKey("TransactionObject", []string{transaction.Fromid, transaction.Transactionid})
 
 
 	if err != nil {
