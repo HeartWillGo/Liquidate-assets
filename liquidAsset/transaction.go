@@ -34,37 +34,16 @@ type Transaction struct {
 }
 
 
-//getTransactionByID 获取某笔交易
-func (t *SimpleChaincode) getTransactionByID(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("ex02 getTransactionByID")
-
-	var Transactin_ID string //交易ID
-	var transaction Transaction
-	if len(args) != 2 {
-		return shim.Error("Incorrect number of arguments. Expecting 1")
-	}
-	Transactin_ID = args[1]
-
-	TransactionInfo, err := stub.GetState(Transactin_ID)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	//将byte的结果转换成struct
-	err = json.Unmarshal(TransactionInfo, &transaction)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	fmt.Printf("TransactionInfo %s  \n", string(TransactionInfo))
-
-	return shim.Success(TransactionInfo)
-}
 
 
 
 
-//Transation交易
+//交易信息入链,创建索引信息
+//args[0] functionname string
+//args[1] userid string
+//args = []string{"Transaction", "json格式的交易数据"}
 func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("put order in ledger")
+	fmt.Println("0x03 Transaction")
 
 	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments")
@@ -198,10 +177,41 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	return shim.Success(nil)
 }
 
-// 得到某一用户的所有交易
+//getTransactionByID 获取某笔交易
+//args[0] functionname string
+//args[1] userid string
+func (t *SimpleChaincode) getTransactionByID(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("ex02 getTransactionByID")
+
+	var Transactin_ID string //交易ID
+	var transaction Transaction
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+	Transactin_ID = args[1]
+
+	TransactionInfo, err := stub.GetState(Transactin_ID)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	//将byte的结果转换成struct
+	err = json.Unmarshal(TransactionInfo, &transaction)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	fmt.Printf("TransactionInfo %s  \n", string(TransactionInfo))
+
+	return shim.Success(TransactionInfo)
+}
+
+//得到某一用户的所有交易,
+//args[0] functionname string
+//args[1] userid string
+//args = []string {"getTransactionByUserID", "1"}
+
 func  (t *SimpleChaincode) getTransactionByUserID(stub shim.ChaincodeStubInterface, args []string) pb.Response  {
 	fmt.Println("0x03 查询userid的所有交易")
-	if len(args) < 2 {
+	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
 
@@ -309,9 +319,10 @@ func  (t *SimpleChaincode) getTransactionByUserID(stub shim.ChaincodeStubInterfa
 }
 
 
-//args[0] "getUserAsset"
-// args[1] :userid
-
+//得到某一用户的所有资产详情
+//args[0] functionname string
+//args[1] userid string
+//args = []string {"getUserAsset", "1"}
 func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("0x05 Enter in getUserAsset")
 	resp := t.getTransactionByUserID(stub, args)
@@ -323,7 +334,6 @@ func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []
 	if err != nil {
 		fmt.Println("marshal wrong")
 	}
-
 	fmt.Println(string(assetBytes))
 
 	return shim.Success(assetBytes)
