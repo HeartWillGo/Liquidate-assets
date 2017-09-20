@@ -102,13 +102,16 @@ func checkInvoke(t *testing.T, stub *shim.MockStub, args [][]byte, checkargs str
 				t.FailNow()
 			}
 	case "getTransactionByUserID" == string(args[1]):
-		fmt.Println("asdf", string(res.GetPayload()))
+		fmt.Println("start test getTransactionByUserID")
+		fmt.Println("transactionByUserID")
 
-		if string(res.GetPayload()) != checkargs {
-			t.FailNow()
-		}
+
+	case "getUserAsset"	== string(args[1]):
+		fmt.Println("start test getUserAsset")
+		fmt.Println("UserAsset", string(res.GetPayload()))
 	}
 }
+
 
 
 func TestInit(t *testing.T) {
@@ -127,7 +130,7 @@ func TestTransaction (t *testing.T) {
 
 	str0 := `this we arrive the init function`
 	checkInit(t, stub, [][]byte{[]byte("init"), []byte(str0)})
-	generate_transdata(2)
+	// generate_transdata(3)
 	Transactions := getTrans()
 	trans_map := make(map[string][]byte)
 
@@ -139,11 +142,10 @@ func TestTransaction (t *testing.T) {
 		trans_map[tran.Transactionid] = tranBytes
 		checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("Transaction"), tranBytes},string(tranBytes))
 		checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByID"), []byte(tran.Transactionid)}, string(tranBytes))
-
 	}
 
-	checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByUserID"), []byte("1")}, string(trans_map["1"]))
-
+	 checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByUserID"), []byte("1")}, string(trans_map["1"]))
+	 checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAsset"), []byte("1")}, string(trans_map["1"]))
 
 }
 

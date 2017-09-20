@@ -325,6 +325,4 @@ func (t *SimpleChaincode) WriteUser(stub shim.ChaincodeStubInterface, args []str
 	fmt.Printf(" CeateBank success \n")
 	return shim.Success(nil)
 }
-func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, argsw []string) pb.Response{
-	return shim.Success(nil)
-}
+

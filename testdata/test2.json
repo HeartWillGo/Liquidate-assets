@@ -1,0 +1,90 @@
+[
+  {
+    "statistic_date": "1505895476",
+    "trading_entity_id": "1",
+    "transaction_num": 3,
+    "asset_type": "",
+    "asset_info": "",
+    "trade_start_time": 1505887743,
+    "trade_end_time": 1505887743,
+    "asset_balance": 108.12,
+    "asset_income": 108.12,
+    "asset_outcome": 0,
+    "organization_Map": {
+      "pingan": {
+        "id": "pingan",
+        "type": 0,
+        "transactionnum": 3,
+        "tradestarttime": 1505887743,
+        "tradeendtime": 1505887743,
+        "balance": 0,
+        "outcome": 108.12,
+        "income": 0,
+        "productmap": {
+          "2": {
+            "id": "2",
+            "tradestarttime": 1505887743,
+            "tradeendtime": 1505887743,
+            "transactionum": 1,
+            "balance": 0,
+            "outcome": 36.12,
+            "income": 0
+          }
+        }
+      }
+    }
+  },
+  {
+    "statistic_date": "1505896172",
+    "trading_entity_id": "1",
+    "transaction_num": 3,
+    "asset_type": "",
+    "asset_info": "",
+    "trade_start_time": 1505887743,
+    "trade_end_time": 1505887743,
+    "asset_balance": 108.12,
+    "asset_income": 108.12,
+    "asset_outcome": 0,
+    "organization_Map": {
+      "pingan": {
+        "id": "pingan",
+        "type": 0,
+        "transactionnum": 3,
+        "tradestarttime": 1505887743,
+        "tradeendtime": 1505887743,
+        "balance": 0,
+        "outcome": 108.12,
+        "income": 0,
+        "productmap": {
+          "0": {
+            "id": "0",
+            "tradestarttime": 1505887743,
+            "tradeendtime": 1505887743,
+            "transactionum": 1,
+            "balance": 0,
+            "outcome": 36,
+            "income": 0
+          },
+          "1": {
+            "id": "1",
+            "tradestarttime": 1505887743,
+            "tradeendtime": 1505887743,
+            "transactionum": 1,
+            "balance": 0,
+            "outcome": 36,
+            "income": 0
+          },
+          "2": {
+            "id": "2",
+            "tradestarttime": 1505887743,
+            "tradeendtime": 1505887743,
+            "transactionum": 1,
+            "balance": 0,
+            "outcome": 36.12,
+            "income": 0
+          }
+        }
+      }
+    }
+  }
+]

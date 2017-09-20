@@ -76,6 +76,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case args[0] == "CreateUser":
 		return t.CreateUser(stub, args)
 	case args[0] == "getUserAsset":
+		fmt.Println("entering getuesrAsset")
 		return t.getUserAsset(stub, args)
 
 	case args[0] == "createOrganization":
