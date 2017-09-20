@@ -133,58 +133,158 @@ response 参数:
 ```
 Transaction # 交易 
 request 参数 
-args[0]：交易ID 
-args1 :交易类型 0，表示申购 1，表示赎回 
-args2:交易状态 
-args3:交易发起方类型 
-args4：交易发起方ID 
-args5:交易接收方类型 
-args6:交易接收方ID 
-args[7]：交易产品ID 
-args[8]:份额 
-args[9]:交易时间 
+args[0] = 
+{
+    "transactionid": "0",
+    "transactiondate": 1505887743,
+    "parentorder": "0",
+    "suborder": "0",
+    "payid": "0",
+    "transtype": "0",
+    "fromtype": 1,
+    "fromid": "1",
+    "totype": 1,
+    "toid": "VjIwPrHi",
+    "productid": "0",
+    "productinfo": "wegoodi%3",
+    "organizationid": "pingan",
+    "amount": 4,
+    "price": 9
+  }
+  response:
+        nil
+```
+
+```
+getTransactionByID #根据交易ID获取数据
+request 参数 len(args) = 1
+args[0]= "1"
+
 response 参数： 
-{ ” ID “:”XXX”, 
-“Trans_type “:”XXX”,” 
-TransStatus “:”XXX”, 
-“FromType “:”XXX”,” 
-FromID “:”XXX”, 
-“ToType “:”XXX”, 
-“ToID “:”XXX”, 
-“ProductID “:”XXX”, 
-“Account “:”XXX”, 
-“TransDate“：”XXX“}
+
+  {
+    "transactionid": "0",
+    "transactiondate": 1505887743,
+    "parentorder": "0",
+    "suborder": "0",
+    "payid": "0",
+    "transtype": "0",
+    "fromtype": 1,
+    "fromid": "1",
+    "totype": 1,
+    "toid": "VjIwPrHi",
+    "productid": "0",
+    "productinfo": "wegoodi%3",
+    "organizationid": "pingan",
+    "amount": 4,
+    "price": 9
+  },
+  ...
+  
 ```
 ```
-getTransaction #获取所有交易 
-request 参数
+getTransactionByUserID #根据UserID获取某个用户下的所有交易
+request 参数  len(args) = 1
+args[0]：UserID 
 response 参数： 
-{ ” ID “:”XXX”, 
-“Trans_type “:”XXX”,” 
-TransStatus “:”XXX”, 
-“FromType “:”XXX”,” 
-FromID “:”XXX”, 
-“ToType “:”XXX”, 
-“ToID “:”XXX”, 
-“ProductID “:”XXX”, 
-“Account “:”XXX”, 
-“TransDate“：”XXX“}
+[
+  {
+    "transactionid": "0",
+    "transactiondate": 1505887743,
+    "parentorder": "0",
+    "suborder": "0",
+    "payid": "0",
+    "transtype": "0",
+    "fromtype": 1,
+    "fromid": "1",
+    "totype": 1,
+    "toid": "VjIwPrHi",
+    "productid": "0",
+    "productinfo": "wegoodi%3",
+    "organizationid": "pingan",
+    "amount": 4,
+    "price": 9
+  },
+  {
+    "transactionid": "1",
+    "transactiondate": 1505887743,
+    "parentorder": "1",
+    "suborder": "1",
+    "payid": "1",
+    "transtype": "1",
+    "fromtype": 1,
+    "fromid": "1",
+    "totype": 1,
+    "toid": "VjIwPrHi",
+    "productid": "1",
+    "productinfo": "wegoodi%3",
+    "organizationid": "pingan",
+    "amount": 4,
+    "price": 9
+  },...
+ ]
+
+
 ```
 ```
-getTransactionByID #获取某笔交易 
-request 参数 
-args[0]：交易ID 
-response 参数： 
-{ ” ID “:”XXX”, 
-“Trans_type “:”XXX”,” 
-TransStatus “:”XXX”, 
-“FromType “:”XXX”,” 
-FromID “:”XXX”, 
-“ToType “:”XXX”, 
-“ToID “:”XXX”, 
-“ProductID “:”XXX”, 
-“Account “:”XXX”, 
-“TransDate“：”XXX“}
+getUserAsset #获取某一用户的资产详情
+request 参数： len(args) =1 
+args[0]: userid
+response:
+{
+    "statistic_date": "1505896172",
+    "trading_entity_id": "1",
+    "transaction_num": 3,
+    "asset_type": "",
+    "asset_info": "",
+    "trade_start_time": 1505887743,
+    "trade_end_time": 1505887743,
+    "asset_balance": 108.12,
+    "asset_income": 108.12,
+    "asset_outcome": 0,
+    "organization_Map": {
+      "pingan": {
+        "id": "pingan",
+        "type": 0,
+        "transactionnum": 3,
+        "tradestarttime": 1505887743,
+        "tradeendtime": 1505887743,
+        "balance": 0,
+        "outcome": 108.12,
+        "income": 0,
+        "productmap": {
+          "0": {
+            "id": "0",
+            "tradestarttime": 1505887743,
+            "tradeendtime": 1505887743,
+            "transactionum": 1,
+            "balance": 0,
+            "outcome": 36,
+            "income": 0
+          },
+          "1": {
+            "id": "1",
+            "tradestarttime": 1505887743,
+            "tradeendtime": 1505887743,
+            "transactionum": 1,
+            "balance": 0,
+            "outcome": 36,
+            "income": 0
+          },
+          "2": {
+            "id": "2",
+            "tradestarttime": 1505887743,
+            "tradeendtime": 1505887743,
+            "transactionum": 1,
+            "balance": 0,
+            "outcome": 36.12,
+            "income": 0
+          }
+        }
+      }
+    }
+  }
+
 ```
 ```
 getProduct #获取产品信息 
