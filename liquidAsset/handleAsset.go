@@ -158,29 +158,34 @@ func computeProductSaleInformation(transactionBytes []byte) ProductAsset {
 func computeProductAllUser(transactionBytes []byte) []byte {
 
 	var recordTransaction []RecordTransaction
-	var UserOperateProductMap = make(map[string]*ProductProcess)
+	var productAsset ProductAsset
+	productAsset.UserMap = make(map[string]*UserAsset)
+
 	err := json.Unmarshal(transactionBytes, &recordTransaction)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-
 	for _, record := range recordTransaction{
 		tran := record.Record
 
-		 _, ok := UserOperateProductMap[tran.Toid]
+		 _, ok := productAsset.UserMap[tran.Toid]
 		if ok == false {
-			UserOperateProductMap[tran.Toid] = &ProductProcess{ProcessAmount:0.0}
-		}
-		UserOperateProductMap[tran.Toid].ProcessAmount += tran.Amount * tran.Price
-		fmt.Println(UserOperateProductMap[tran.Toid].ProcessAmount)
+			productAsset.UserMap[tran.Toid] = &UserAsset{TradingEntityID:tran.Toid}
+			productAsset.ID = tran.Organizationid
+			productAsset.StatisticDate =  fmt.Sprintf("%v", time.Now().Unix())
 
+		}
+		productAsset.TransactionNum += 1
+		productAsset.Balance += tran.Amount * tran.Price
+		productAsset.UserMap[tran.Toid].AssetBalance += tran.Amount * tran.Price
+		productAsset.UserMap[tran.Toid].TransactionNum += 1
 	}
-	UserOperateProductMapBytes, err  := json.Marshal(UserOperateProductMap)
+	productAssetBytes, err  := json.Marshal(productAsset)
 	if err != nil {
 		fmt.Println("marshal userOperateProductMapBytes Wrong")
 	}
 
-	return UserOperateProductMapBytes
+	return productAssetBytes
 
 }
 

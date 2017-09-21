@@ -27,34 +27,8 @@ import (
 	"strconv"
 	asset "github.com/Liquidate-assets/liquidAsset"
 )
-////交易内容
-//type Transaction struct {
-//	//交易的ID和
-//	Transactionid   string `json:"transactionid"`
-//	Transactiondate string `json:"transactiondate"`
-//
-//	Parentorder     string `json:"parentorder"`
-//	Suborder        string `json:"suborder"`
-//	Payid           string `json:"payid"`
-//	交易头部
-//	Transtype       string `json:"transtype"`
-//	Fromtype        int    `json:"fromtype"`
-//	Fromid          string `json:"fromid"`
-//	Totype          int    `json:"totype"`
-//	Toid            string `json:"toid"`
-//	//交易内容
-//	Productid       string `json:"productid"`
-//	Productinfo     string `json:"productinfo"`
-//	Organizationid  string `json:"organizationid"`
-//
-//	Amount          int    `json:"amount"`
-//	Price           int    `json:"price"`
-//}
 
-var chaincodeName = "aaset"
-
-// chaincode_example05 looks like it wanted to return a JSON response to Query()
-// it doesn't actually do this though, it just returns the sum value
+// looks like it wanted to return a JSON response to Query()
 func jsonResponse(name string, value string) string {
 	return fmt.Sprintf("jsonResponse = \"{\"Name\":\"%v\",\"Value\":\"%v\"}", name, value)
 }
@@ -66,6 +40,7 @@ func checkInit(t *testing.T, stub *shim.MockStub, args [][]byte) {
 		t.FailNow()
 	}
 }
+
 
 func checkState(t *testing.T, stub *shim.MockStub, name string, expect string) {
 	bytes := stub.State[name]

@@ -14,7 +14,7 @@ type User struct {
 	Name               string `json:"Name"`
 	Identificationtype int    `json:"identificationtype"`
 	Identification     string `json:"identification"`
-	Sex                string `json:"sex"`
+	Sex                int `json:"sex"`
 	Birthday           string `json:"birthday"`
 	Bankcard           string `json:"bankcard"`
 	Phonenumber        string `json:"phonenumber"`
@@ -62,7 +62,7 @@ func (t *SimpleChaincode) UserLogin(stub shim.ChaincodeStubInterface, args []str
 
 //createUser
 func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("ex02 CreateUser")
+	fmt.Println("ex0201 CreateUser")
 
 	var user User
 
@@ -90,13 +90,15 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	if err != nil {
 		return shim.Error(err.Error())
 	}
+
+
 	return shim.Success(nil)
 }
 
 
 //getUser 获取用户信息
 func (t *SimpleChaincode) getUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("ex02 getUser")
+	fmt.Println("ex0202 getUser")
 
 	var User_ID string // 用户ID
 	var user User
@@ -114,12 +116,39 @@ func (t *SimpleChaincode) getUser(stub shim.ChaincodeStubInterface, args []strin
 	}
 	//将byte的结果转换成struct
 	err = json.Unmarshal(userinfo, &user)
-	fmt.Printf("  userinfo  = %d  \n", userinfo)
 	return shim.Success(userinfo)
 }
 
 // TODO writeUser  修改用户信息,全部更改?
 func (t *SimpleChaincode) WriteUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("ex02 WriteUser")
+
+	var user User
+
+	if len(args) != 2 {
+		return shim.Error("CreateUser：Incorrect number of arguments. Expecting 2")
+	}
+
+	err := json.Unmarshal([]byte(args[1]),&user)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	userInfo, err  := json.Marshal(user)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	userByte, err := stub.GetState(user.ID)
+	if err != nil {
+		return shim.Error("failed to return userbytes")
+	} else  if userByte == nil {
+		return shim.Error(user.ID + "don't have")
+	}
+	err = stub.PutState(user.ID, userInfo)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
 
 	return shim.Success(nil)
 }
@@ -129,7 +158,7 @@ func (t *SimpleChaincode) WriteUser(stub shim.ChaincodeStubInterface, args []str
 //args[1] userid string
 //args = []string {"getUserAsset", "1"}
 func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("0x05 Enter in getUserAsset")
+	fmt.Println("0x0203 Enter in getUserAsset")
 	resp := t.getTransactionByUserID(stub, args)
 	if resp.Status != shim.OK {
 		return shim.Error("getUserAssetFailed")
@@ -149,7 +178,6 @@ func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []
 //return [{product1}, {product2}]
 func (t *SimpleChaincode) getUserOrgProductid(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("0x06 Enter in getUserByProductid")
-	fmt.Println(args)
 	resp := t.getTransactionByUserID(stub, args[1:])
 	if resp.Status != shim.OK {
 		return shim.Error("getUserAssetFailed")
@@ -167,7 +195,6 @@ func (t *SimpleChaincode) getUserOrgProductid(stub shim.ChaincodeStubInterface, 
 		if AlreadyProduct == true {
 			buffer.WriteString(",")
 		}
-		fmt.Println("productinfo", productInfo)
 		buffer.WriteString(string(productInfo))
 		AlreadyProduct = false
 	}
@@ -180,7 +207,7 @@ func (t *SimpleChaincode) getUserOrgProductid(stub shim.ChaincodeStubInterface, 
 //args []string{"getUserAllProduct", "userid"}
 //return product
 func (t *SimpleChaincode) getUserAllProduct(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("0x06 Enter in GetUserAllProduct")
+	fmt.Println("0x0204 Enter in GetUserAllProduct")
 
 	resp := t.getTransactionByUserID(stub, args)
 	if resp.Status != shim.OK {
@@ -207,8 +234,8 @@ func (t *SimpleChaincode) getUserAllProduct(stub shim.ChaincodeStubInterface, ar
 			if AlreadyProduct {
 				buffer.WriteString(",")
 			}
+			fmt.Println("productid", Product.ID)
 			productBytes, err := stub.GetState(Product.ID)
-			fmt.Println(",sfa", string(productBytes))
 			if err != nil {
 				return shim.Error(err.Error())
 			}
@@ -227,21 +254,21 @@ func (t *SimpleChaincode) getUserAllProduct(stub shim.ChaincodeStubInterface, ar
 
 //TODO:
 //getAsset里面包含了user在机构的所有信息,这个地方是否有必要？
-//args []string{"getUserFromOrganizationAsset",  "organizationid", "productid","userid"}
+//args []string{"getUserFromOrganizationAsset",  "organizationid", "userid"}
 func (t *SimpleChaincode) getUserFromOrganizationAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("0x05 Enter in getUserFromOrganizationAsset")
-	resp := t.getTransactionByUserID(stub, args[2:])
+	resp := t.getTransactionByUserID(stub, args[1:])
 	if resp.Status != shim.OK {
 		return shim.Error("getTransactionByUserID")
 	}
-	asset := computeAssetByUserID(args[3], resp.GetPayload())
+	asset := computeAssetByUserID(args[2], resp.GetPayload())
 	assetBytes, err := json.Marshal(asset)
 	if err != nil {
 		fmt.Println("marshal wrong")
 	}
 	fmt.Println(string(assetBytes))
 
-	productInfo := asset.OrganizatonMap[args[1]].ProductMap[args[2]]
+	productInfo := asset.OrganizatonMap[args[1]]
 
 	productBytes, err := json.Marshal(productInfo)
 	if err != nil {

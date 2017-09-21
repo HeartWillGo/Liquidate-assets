@@ -55,6 +55,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 	case args[0] == "CreateUser":
 		return t.CreateUser(stub, args)
+	case args[0] == "getUser":
+		return t.getUser(stub, args)
 	case args[0] == "getUserAsset":
 		fmt.Println("entering getuesrAsset")
 		return t.getUserAsset(stub, args)
@@ -64,10 +66,12 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case args[0]  == "getUserAllProduct":
 		fmt.Println("entering getUserAllProduct")
 		return t.getUserAllProduct(stub, args)
-	case args[0] == "getUser":
-		return t.getUser(stub, args)
+	case args[0] == "getUserFromOrganizationAsset":
+		fmt.Println("entering getUserFromOrganizationAsset")
+		return t.getUserFromOrganizationAsset(stub, args)
 	case args[0] == "WriteUser":
 		return t.WriteUser(stub, args)
+
 
 
 	case args[0] == "CreateProduct":
@@ -80,6 +84,10 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.getProductSaleInformation(stub, args)
 	case args[0] == "getProductAllUser"	:
 		return t.getProductAllUser(stub, args)
+	case args[0] == "getProductTransactionByProductID":
+		return t.getProductTransactionByProductID(stub, args)
+
+
 
 	case args[0] == "createOrganization":
 		return t.createOrganization(stub, args)
@@ -90,6 +98,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case args[0] == "getOrganizationProduct":
 		return t.getOrganizationProduct(stub, args)
 
+
 	case args[0] == "Transaction":
 		return t.Transaction(stub, args)
 	case args[0] == "getTransactionByID":
@@ -98,8 +107,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.getTransactionByUserID(stub, args)
 	case args[0] == "getTransactionByTransactionidRange":
 		return t.getTransactionByTransactionidRange(stub, args)
-	case args[0] == "getProductTransactionByProductID":
-		return t.getProductTransactionByProductID(stub, args)
+
 	case args[0] == "getTransactionByOrganizationid":
 		return t.getTransactionByOrganizationid(stub, args)
 

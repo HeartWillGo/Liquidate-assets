@@ -74,7 +74,6 @@ func (t *SimpleChaincode) getProduct(stub shim.ChaincodeStubInterface, args []st
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-	fmt.Printf("  ProductInfo  = %d  \n", ProductInfo)
 	return shim.Success(ProductInfo)
 }
 //TODO WriteProduct 修改产品
@@ -133,14 +132,12 @@ func (t *SimpleChaincode) getProductTransactionByProductID(stub shim.ChaincodeSt
 
 		buffer.WriteString(", \"Record\":")
 		// Record is a JSON object, so we write as-is
-		fmt.Println("what the fuck", string(transactionBytes))
 		buffer.WriteString(string(transactionBytes))
 		buffer.WriteString("}")
 		bArrayMemberAlreadyWritten = true
 	}
 
 	buffer.WriteString("]")
-	fmt.Println(buffer.Len())
 	return shim.Success(buffer.Bytes())
 
 }
@@ -156,21 +153,19 @@ func (t *SimpleChaincode) getProductSaleInformation(stub shim.ChaincodeStubInter
 	if err != nil {
 		fmt.Println("marshal wrong")
 	}
-	fmt.Println(string(assetBytes))
 
 	return shim.Success(assetBytes)
 
 }
 //得到某一产品的购买用户
 func (t *SimpleChaincode) getProductAllUser(stub shim.ChaincodeStubInterface, args []string) pb.Response{
-	fmt.Println("0x08 Enter in getProductSaleInformation")
+	fmt.Println("0x08 Enter in getProductAllUser")
 	resp := t.getProductTransactionByProductID(stub, args)
 	if resp.Status != shim.OK {
 		return shim.Error("getProductTransactionByProductID Failed")
 	}
 	AllUser := computeProductAllUser(resp.GetPayload())
 
-	fmt.Println(string(AllUser))
 
 	return shim.Success(AllUser)
 
