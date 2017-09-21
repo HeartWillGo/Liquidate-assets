@@ -307,9 +307,9 @@ func TestProduct (t *testing.T) {
 	checkInit(t, stub, [][]byte{[]byte("init"), []byte(str0)})
 	getALLToHyperledger(t, stub)
 
-	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getProductTransactionByProductid"), []byte("productid0")}, string("d"))
-	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getProductAsset"), []byte("productid0")}, string("d"))
-	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getProductAllUser"), []byte("productid0")}, string("d"))
+	checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("getProductTransactionByProductID"), []byte("productid0")}, string("d"))
+	checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("getProductAsset"), []byte("productid0")}, string("d"))
+	checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("getProductAllUser"), []byte("productid0")}, string("d"))
 
 
 }
