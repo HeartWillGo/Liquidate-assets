@@ -142,8 +142,8 @@ func (t *SimpleChaincode) getProductTransactionByProductID(stub shim.ChaincodeSt
 
 }
 //得到某一产品的售卖汇总
-func (t *SimpleChaincode) getProductSaleInformation(stub shim.ChaincodeStubInterface, args []string) pb.Response{
-	fmt.Println("0x08 Enter in getProductSaleInformation")
+func (t *SimpleChaincode) getProductAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response{
+	fmt.Println("0x08 Enter in getProductAsset")
 	resp := t.getProductTransactionByProductID(stub, args)
 	if resp.Status != shim.OK {
 		return shim.Error("getProductTransactionByProductID Failed")

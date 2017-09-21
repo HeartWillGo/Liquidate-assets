@@ -130,8 +130,6 @@ func (t *SimpleChaincode) getTransactionByOrganizationid(stub shim.ChaincodeStub
 			return shim.Error("the transactionid is not put in the ledger")
 		}
 
-		fmt.Println("transactionid", transactionid,string(transactionBytes))
-
 		buffer.WriteString("{\"Key\":")
 		buffer.WriteString("\"")
 		buffer.WriteString(transactionid)
@@ -139,13 +137,11 @@ func (t *SimpleChaincode) getTransactionByOrganizationid(stub shim.ChaincodeStub
 
 		buffer.WriteString(", \"Record\":")
 		// Record is a JSON object, so we write as-is
-		fmt.Println("what the fuck", string(transactionBytes))
 		buffer.WriteString(string(transactionBytes))
 		buffer.WriteString("}")
 		bArrayMemberAlreadyWritten = true
 	}
 	buffer.WriteString("]")
-	fmt.Println(buffer.Len())
 	return shim.Success(buffer.Bytes())
 }
 
@@ -164,15 +160,45 @@ func (t *SimpleChaincode) getOrganizationProduct(stub shim.ChaincodeStubInterfac
 	if err != nil {
 		fmt.Println("marshal wrong")
 	}
-	fmt.Println(string(productAssetBytes))
 
 	return shim.Success(productAssetBytes)
 
 }
 
 func (t *SimpleChaincode) getOrganizationAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	return shim.Success(nil)
+
+	fmt.Println("0x11 getOrganizationAsset")
+
+	if len(args) != 2 {
+		return shim.Error("Expecting 2, but get wrong")
+	}
+	resp := t.getTransactionByOrganizationid(stub, args)
+	if resp.Status != shim.OK {
+		return shim.Error("getUserAssetFailed")
+	}
+	productAsset := computeOrgnazitionAllProduct(resp.GetPayload())
+	productAssetBytes, err := json.Marshal(productAsset)
+	if err != nil {
+		fmt.Println("marshal wrong")
+	}
+
+	return shim.Success(productAssetBytes)
 }
 func (t *SimpleChaincode) getOrganizationUser(stub shim.ChaincodeStubInterface, args []string) pb.Response{
-	return shim.Success(nil)
+	fmt.Println("0x11 getOrganizationUser")
+
+	if len(args) != 2 {
+		return shim.Error("Expecting 2, but get wrong")
+	}
+	resp := t.getTransactionByOrganizationid(stub, args)
+	if resp.Status != shim.OK {
+		return shim.Error("getUserAssetFailed")
+	}
+	productAsset := computeOrgnazitionAllUser(resp.GetPayload())
+	productAssetBytes, err := json.Marshal(productAsset)
+	if err != nil {
+		fmt.Println("marshal wrong")
+	}
+
+	return shim.Success(productAssetBytes)
 }

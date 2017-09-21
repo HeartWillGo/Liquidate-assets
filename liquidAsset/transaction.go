@@ -9,31 +9,35 @@ import (
 	"bytes"
 )
 
-//交易内容
+// 账本数据
 type Transaction struct {
-	//交易的ID和
-	Transactionid   string `json:"transactionid"`
-	Transactiondate int64 `json:"transactiondate"`
 
-	Parentorder     string `json:"parentorder"`
-	Suborder        string `json:"suborder"`
-	Payid           string `json:"payid"`
 	//交易头部
-	Transtype       string `json:"transtype"`
-	Fromtype        int    `json:"fromtype"`
-	Fromid          string `json:"fromid"`
-	Totype          int    `json:"totype"`
-	Toid            string `json:"toid"`
-	//交易内容
-	Productid       string `json:"productid"`
-	Productinfo     string `json:"productinfo"`
-	Organizationid  string `json:"organizationid"`
-
-	Amount          float64    `json:"amount"`
-	Price           float64    `json:"price"`
+	SID               string `json:"SID"`
+	ReceiverSID       string `json:"ReceiverSID"`
+	OriginSID         string `json:"OriginSID"`
+	RequestSerial     string `json:"RequestSerial"`
+	NextRequestSerial string `json:"NextRequestSerial"`
+	Proposaltime      int64   `json:"Proposaltime"`
+	//交易ID,区块链中的索引
+	Transactionid     string `json:"transactionid"`
+	Transactiondate   int64    `json:"transactiondate"`
+	Parentorder       string `json:"parentorder"`
+	Suborder          string `json:"suborder"`
+	Payid             string `json:"payid"`
+	//交易双方
+	Transtype         string `json:"transtype"`
+	Fromtype          int    `json:"fromtype"`
+	Fromid            string `json:"fromid"`
+	Totype            int    `json:"totype"`
+	Toid              string `json:"toid"`
+	//实际内容
+	Productid         string `json:"productid"`
+	Productinfo       string `json:"productinfo"`
+	Organizationid    string `json:"organizationid"`
+	Amount            float64    `json:"amount"`
+	Price             float64    `json:"price"`
 }
-
-
 
 
 
@@ -303,7 +307,6 @@ func  (t *SimpleChaincode) getTransactionByUserID(stub shim.ChaincodeStubInterfa
 	return shim.Success(buffer.Bytes())
 }
 
-//得到某一交易,
 
 //args[0] functionname string
 //args[1] userid string

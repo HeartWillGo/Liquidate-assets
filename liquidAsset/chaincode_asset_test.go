@@ -126,16 +126,6 @@ func checkInvokeTransaction(t *testing.T, stub *shim.MockStub, args [][]byte, ch
 		fmt.Println("getTransactionByTransactionidRange", string(res.GetPayload()))
 
 
-
-	case "getProductTransactionByProductID" == string(args[1]):
-		fmt.Println("start teste getProductTransactionByProductID")
-		fmt.Println("getProductTransactionByProductID", string(res.GetPayload()))
-	case "getProductSaleInformation" == string(args[1]):
-		fmt.Println("start teste getProductSaleInformation")
-		fmt.Println("getProductSaleInformation", string(res.GetPayload()))
-	case "getProductAllUser" == string(args[1]):
-		fmt.Println("start teste getProductAllUser")
-		fmt.Println("getProductAllUser", string(res.GetPayload()))
 	case "getTransactionByOrganizationid" == string(args[1]):
 		fmt.Println("start test getTransactionByOrganizationid")
 		fmt.Println("getTransactionByOrganizationid", string(res.GetPayload()))
@@ -162,9 +152,9 @@ func checkInvokeProduct(t *testing.T, stub *shim.MockStub, args [][]byte, checka
 		} else {
 			fmt.Println("getProduct success")
 		}
-	case "getProductSaleInformation" == string(args[1]):
-		fmt.Println("start teste getProductSaleInformation")
-		fmt.Println("getProductSaleInformation", string(res.GetPayload()))
+	case "getProductAsset" == string(args[1]):
+		fmt.Println("start teste getProductAsset")
+		fmt.Println("getProductAsset", string(res.GetPayload()))
 
 	case "getProductAllUser" == string(args[1]):
 		fmt.Println("start teste getProductAllUser")
@@ -197,13 +187,22 @@ func checkInvokeOrganization(t *testing.T, stub *shim.MockStub, args [][]byte, c
 		}else {
 			fmt.Println("getOrganization success")
 	}
-	case "getProductAllUser" == string(args[1]):
-		fmt.Println("start teste getProductAllUser")
-		fmt.Println("getProductAllUser", string(res.GetPayload()))
+	case "getTransactionByOrganizationid" == string(args[1]):
+		fmt.Println("start test getTransactionByOrganizationid")
+		fmt.Println("getTransactionByOrganizationid", string(res.GetPayload()))
 
 	case "getOrganizationProduct" == string(args[1]):
-		fmt.Println("start test getOrganizationProduct")
+		fmt.Println("start teste getOrganizationProduct")
 		fmt.Println("getOrganizationProduct", string(res.GetPayload()))
+
+	case "getOrganizationAsset" == string(args[1]):
+		fmt.Println("start teste getOrganizationAsset")
+		fmt.Println("getOrganizationAsset", string(res.GetPayload()))
+
+	case "getOrganizationUser" == string(args[1]):
+		fmt.Println("start teste getOrganizationUser")
+		fmt.Println("getOrganizationUser", string(res.GetPayload()))
+
 	}
 }
 
@@ -284,37 +283,18 @@ func TestUser (t *testing.T) {
 }
 
 func TestTransaction (t *testing.T) {
+
 	scc := new(SimpleChaincode)
-	stub := shim.NewMockStub("ex05", scc)
-
+	stub := shim.NewMockStub("asset", scc)
 	str0 := `this we arrive the init function`
+
 	checkInit(t, stub, [][]byte{[]byte("init"), []byte(str0)})
-	// 产生测试数据
-	// generate_transdata(3)
-
-	//从testdata/transacion.json获取数据
-	Transactions := getTrans()
+	getALLToHyperledger(t, stub)
 
 
-	trans_map := make(map[string][]byte)
-	for _, tran := range Transactions {
-		tranBytes, err:= json.Marshal(tran)
-		if err != nil {
-			t.Fail()
-		}
-		trans_map[tran.Transactionid] = tranBytes
-		checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("Transaction"), tranBytes},string(tranBytes))
-		//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByID"), []byte(tran.Transactionid)}, string(tranBytes))
-	}
-
-	//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByUserID"), []byte("1")}, string(trans_map["1"]))
-	//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAllProduct"),[]byte("1")}, string(trans_map["1"]))
 
 
-	//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getUserOrgProductid"), []byte("pingan"), []byte("1")}, string(trans_map["1"]))
-	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getProductTransactionByProductID"), []byte("5")}, string(trans_map["1"]))
-
-	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByTransactionidRange"), []byte("1"),[]byte("3")}, string(trans_map["1"]))
+	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByTransactionidRange"), []byte("transactionid0"),[]byte("transactionid4")}, string("1"))
 
 
 }
@@ -327,8 +307,8 @@ func TestProduct (t *testing.T) {
 	checkInit(t, stub, [][]byte{[]byte("init"), []byte(str0)})
 	getALLToHyperledger(t, stub)
 
-	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getProductTransactionByProductID"), []byte("productid0")}, string("d"))
-	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getProductSaleInformation"), []byte("productid0")}, string("d"))
+	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getProductTransactionByProductid"), []byte("productid0")}, string("d"))
+	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getProductAsset"), []byte("productid0")}, string("d"))
 	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getProductAllUser"), []byte("productid0")}, string("d"))
 
 
@@ -336,29 +316,16 @@ func TestProduct (t *testing.T) {
 
 func TestOrganization (t *testing.T) {
 	scc := new(SimpleChaincode)
-	stub := shim.NewMockStub("ex05", scc)
-
+	stub := shim.NewMockStub("asset", scc)
 	str0 := `this we arrive the init function`
+
 	checkInit(t, stub, [][]byte{[]byte("init"), []byte(str0)})
+	getALLToHyperledger(t, stub)
 
-	// generate_transdata(3)
-	//从testdata/transaUserAsset {"statistic_date":"1505999657","trading_entity_id":"userid0","transaction_num":3,"asset_type":"","asset_info":"","trade_start_time":1505999137,"trade_end_time":1505999137,"asset_balance":108,"asset_income":108,"asset_outcome":0,"organization_Map":{"pingan":{"id":"pingan","statistic_date":"","type":0,"transactionnum":3,"tradestarttime":1505999137,"tradeendtime":1505999137,"balance":0,"outcome":108,"income":0,"productmap":{"0":{"id":"0","statistic_date":"","tradestarttime":1505999137,"tradeendtime":1505999137,"transactionum":1,"balance":0,"outcome":36,"income":0,"asset":null},"1":{"id":"1","statistic_date":"","tradestarttime":1505999137,"tradeendtime":1505999137,"transactionum":1,"balance":0,"outcome":36,"income":0,"asset":null},"2":{"id":"2","statistic_date":"","tradestarttime":1505999137,"tradeendtime":1505999137,"transactionum":1,"balance":0,"outcome":36,"income":0,"asset":null}},"asset":null}}}
-	Transactions := getTrans()
-
-
-	trans_map := make(map[string][]byte)
-
-	for _, tran := range Transactions {
-		tranBytes, err:= json.Marshal(tran)
-		if err != nil {
-			t.Fail()
-		}
-		trans_map[tran.Transactionid] = tranBytes
-		checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("Transaction"), tranBytes},string(tranBytes))
-	}
-
-	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByOrganizationid"), []byte("pingan")}, string(trans_map["1"]))
-	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getOrganizationProduct"), []byte("pingan")}, string(trans_map["1"]))
+	checkInvokeOrganization(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByOrganizationid"), []byte("pingan")}, string("d"))
+	checkInvokeOrganization(t, stub, [][]byte{[]byte("invoke"), []byte("getOrganizationProduct"), []byte("pingan")}, string("d"))
+	checkInvokeOrganization(t, stub, [][]byte{[]byte("invoke"), []byte("getOrganizationAsset"), []byte("pingan")}, string("d"))
+	checkInvokeOrganization(t, stub, [][]byte{[]byte("invoke"), []byte("getOrganizationUser"), []byte("pingan")}, string("d"))
 
 }
 
