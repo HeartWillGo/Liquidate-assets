@@ -226,7 +226,7 @@ func (t *SimpleChaincode) getUserAllProduct(stub shim.ChaincodeStubInterface, ar
 
 
 //TODO:
-//getUser里面包含了user在机构的所有信息,这个地方是否有必要？
+//getAsset里面包含了user在机构的所有信息,这个地方是否有必要？
 //args []string{"getUserFromOrganizationAsset",  "organizationid", "productid","userid"}
 func (t *SimpleChaincode) getUserFromOrganizationAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("0x05 Enter in getUserFromOrganizationAsset")
@@ -242,5 +242,10 @@ func (t *SimpleChaincode) getUserFromOrganizationAsset(stub shim.ChaincodeStubIn
 	fmt.Println(string(assetBytes))
 
 	productInfo := asset.OrganizatonMap[args[1]].ProductMap[args[2]]
-	return shim.Success([]byte(productInfo))
+
+	productBytes, err := json.Marshal(productInfo)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	return shim.Success(productBytes)
 }

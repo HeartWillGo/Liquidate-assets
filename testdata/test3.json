@@ -91,3 +91,172 @@
     }
   }
 ]
+getTransactionByOrganizationid [
+  {
+    "Key": "0",
+    "Record": {
+      "transactionid": "0",
+      "transactiondate": 1505887743,
+      "parentorder": "0",
+      "suborder": "0",
+      "payid": "0",
+      "transtype": "0",
+      "fromtype": 1,
+      "fromid": "1",
+      "totype": 1,
+      "toid": "VjIwPrHi",
+      "productid": "3",
+      "productinfo": "wegoodi%3",
+      "organizationid": "pingan",
+      "amount": 4,
+      "price": 9
+    }
+  },
+  {
+    "Key": "1",
+    "Record": {
+      "transactionid": "1",
+      "transactiondate": 1505887743,
+      "parentorder": "1",
+      "suborder": "1",
+      "payid": "1",
+      "transtype": "1",
+      "fromtype": 1,
+      "fromid": "1",
+      "totype": 1,
+      "toid": "VjIwPrHi",
+      "productid": "5",
+      "productinfo": "wegoodi%3",
+      "organizationid": "pingan",
+      "amount": 4,
+      "price": 9
+    }
+  },
+  {
+    "Key": "2",
+    "Record": {
+      "transactionid": "2",
+      "transactiondate": 1505887743,
+      "parentorder": "2",
+      "suborder": "2",
+      "payid": "2",
+      "transtype": "2",
+      "fromtype": 1,
+      "fromid": "1",
+      "totype": 1,
+      "toid": "7",
+      "productid": "5",
+      "productinfo": "wegoodi%3",
+      "organizationid": "pingan",
+      "amount": 4,
+      "price": 9.03
+    }
+  },
+  {
+    "Key": "3",
+    "Record":
+  },
+  {
+    "Key": "5",
+    "Record":
+  }
+]
+
+getTransactionByOrganizationid [
+  {
+    "Key": "0",
+    "Record": {
+      "transactionid": "0",
+      "transactiondate": 1505887743,
+      "parentorder": "0",
+      "suborder": "0",
+      "payid": "0",
+      "transtype": "0",
+      "fromtype": 1,
+      "fromid": "1",
+      "totype": 1,
+      "toid": "VjIwPrHi",
+      "productid": "3",
+      "productinfo": "wegoodi%3",
+      "organizationid": "pingan",
+      "amount": 4,
+      "price": 9
+    }
+  },
+  {
+    "Key": "1",
+    "Record": {
+      "transactionid": "1",
+      "transactiondate": 1505887743,
+      "parentorder": "1",
+      "suborder": "1",
+      "payid": "1",
+      "transtype": "1",
+      "fromtype": 1,
+      "fromid": "1",
+      "totype": 1,
+      "toid": "VjIwPrHi",
+      "productid": "5",
+      "productinfo": "wegoodi%3",
+      "organizationid": "pingan",
+      "amount": 4,
+      "price": 9
+    }
+  },
+  {
+    "Key": "2",
+    "Record": {
+      "transactionid": "2",
+      "transactiondate": 1505887743,
+      "parentorder": "2",
+      "suborder": "2",
+      "payid": "2",
+      "transtype": "2",
+      "fromtype": 1,
+      "fromid": "1",
+      "totype": 1,
+      "toid": "7",
+      "productid": "5",
+      "productinfo": "wegoodi%3",
+      "organizationid": "pingan",
+      "amount": 4,
+      "price": 9.03
+    }
+  }
+]
+getOrganizationProduct {
+  "id": "",
+  "statistic_date": "",
+  "type": 0,
+  "transactionnum": 3,
+  "tradestarttime": 0,
+  "tradeendtime": 0,
+  "balance": 108.12,
+  "outcome": 0,
+  "income": 0,
+  "productmap": {
+    "3": {
+      "id": "3",
+      "statistic_date": "",
+      "tradestarttime": 0,
+      "tradeendtime": 0,
+      "transactionum": 1,
+      "balance": 36,
+      "outcome": 0,
+      "income": 0,
+      "asset": null
+    },
+    "5": {
+      "id": "5",
+      "statistic_date": "",
+      "tradestarttime": 0,
+      "tradeendtime": 0,
+      "transactionum": 2,
+      "balance": 72.12,
+      "outcome": 0,
+      "income": 0,
+      "asset": null
+    }
+  },
+  "asset": null
+}

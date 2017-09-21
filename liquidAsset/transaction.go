@@ -134,12 +134,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	}
 	stub.PutState(Organizationid_Transactionid, value)
 
-	// Organizationid~Productid
-	Organizationid_Productid, err := stub.CreateCompositeKey("Organizationid~Transactionid", []string{transaction.Organizationid, transaction.Productid})
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	stub.PutState(Organizationid_Productid, value)
+
 
 	// Organizationid~Fromid
 	Organizationid_Fromid, err := stub.CreateCompositeKey("Organizationid~Fromid", []string{transaction.Organizationid, transaction.Fromid})
@@ -369,4 +364,65 @@ func  (t *SimpleChaincode) getTransactionByTransactionidRange(stub shim.Chaincod
 	return shim.Success(buffer.Bytes())
 
 
+}
+
+
+func (t *SimpleChaincode) getTransactionByOrganizationid(stub shim.ChaincodeStubInterface, args []string) pb.Response{
+	fmt.Println("0x07 getProductTransactionByProductID")
+
+	if len(args) != 2{
+		return shim.Error("Expecting 2, you are wrong")
+	}
+	organizationid := args[1:]
+
+	// This will execute a key range query on all keys starting with 'Productid
+	transactionOrganizationidResultIterator, err := stub.GetStateByPartialCompositeKey("Organizationid~Transactionid", organizationid)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	defer transactionOrganizationidResultIterator.Close()
+
+	bArrayMemberAlreadyWritten := false
+	var buffer bytes.Buffer
+	buffer.WriteString("[")
+	for transactionOrganizationidResultIterator.HasNext() {
+		// Note that we don't get the value (2nd return variable), we'll just get the marble name from the composite key
+		queryResponse, err := transactionOrganizationidResultIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		if bArrayMemberAlreadyWritten == true {
+			buffer.WriteString(",")
+		}
+
+		objectType, compositeKeyParts, err := stub.SplitCompositeKey(queryResponse.Key)
+		if err != nil {
+			return shim.Error("we cannot splitcompositekey")
+		}
+		if objectType != "Organizationid~Transactionid" {
+			return shim.Error("object is not we want " +  organizationid[0])
+		}
+		transactionid := compositeKeyParts[len(compositeKeyParts)-1]
+		transactionBytes,err := stub.GetState(transactionid)
+		if err != nil {
+			return shim.Error("the transactionid is not put in the ledger")
+		}
+
+		fmt.Println("transactionid", transactionid,string(transactionBytes))
+
+		buffer.WriteString("{\"Key\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(transactionid)
+		buffer.WriteString("\"")
+
+		buffer.WriteString(", \"Record\":")
+		// Record is a JSON object, so we write as-is
+		fmt.Println("what the fuck", string(transactionBytes))
+		buffer.WriteString(string(transactionBytes))
+		buffer.WriteString("}")
+		bArrayMemberAlreadyWritten = true
+	}
+	buffer.WriteString("]")
+	fmt.Println(buffer.Len())
+	return shim.Success(buffer.Bytes())
 }

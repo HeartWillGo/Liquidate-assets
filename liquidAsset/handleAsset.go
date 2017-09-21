@@ -10,7 +10,7 @@ import (
 )
 
 
-type Asset struct {
+type UserAsset struct {
 	StatisticDate   string `json:"statistic_date"`
 	TradingEntityID string `json:"trading_entity_id"`
 	TransactionNum  int `json:"transaction_num"`
@@ -36,26 +36,27 @@ type OrganizationAsset struct {
 	Income         float64    `json:"income"`
 
 	ProductMap     map[string]*ProductAsset `json:"productmap"`
+	UserMap 	   map[string]*UserAsset `json:"asset"`
 
 }
 type ProductAsset struct {
 	ID             string `json:"id"`
 	StatisticDate   string `json:"statistic_date"`
-
 	Tradestarttime int64    `json:"tradestarttime"`
 	Tradeendtime   int64    `json:"tradeendtime"`
 	TransactionNum int64  `json:"transactionum"`
 	Balance        float64    `json:"balance"`
 	Outcome        float64    `json:"outcome"`
 	Income         float64    `json:"income"`
+	UserMap 	   map[string]*UserAsset `json:"asset"`
 }
 
 type RecordTransaction struct {
 	Key    string `json:"Key"`
 	Record Transaction `json:"Record"`
 }
-func computeAssetByUserID(statisticID string,  transactionBytes []byte) Asset {
-	var asset Asset
+func computeAssetByUserID(statisticID string,  transactionBytes []byte) UserAsset {
+	var asset UserAsset
 	var recordTransaction []RecordTransaction
 	asset.TradingEntityID = statisticID
 
@@ -64,7 +65,8 @@ func computeAssetByUserID(statisticID string,  transactionBytes []byte) Asset {
 		fmt.Println(err.Error())
 	}
 	asset.StatisticDate = fmt.Sprintf("%v", time.Now().Unix())
-	AlreadyCreateOrg := false
+	asset.OrganizatonMap = make(map[string]*OrganizationAsset)
+
 	AlreadyCreateProductMap := false
 	for _, record := range recordTransaction {
 		//用户的视角 user -----> organizaition
@@ -83,11 +85,7 @@ func computeAssetByUserID(statisticID string,  transactionBytes []byte) Asset {
 		asset.TradeEndTime = findMax(asset.TradeEndTime, tran.Transactiondate)
 		asset.TransactionNum += 1
 		//机构
-		if AlreadyCreateOrg == false {
-			asset.OrganizatonMap = make(map[string]*OrganizationAsset)
 
-		}
-		AlreadyCreateOrg = true
 		_, ok := asset.OrganizatonMap[tran.Organizationid]
 		if !ok {
 			asset.OrganizatonMap[tran.Organizationid] = &OrganizationAsset{ID: tran.Organizationid}
@@ -168,6 +166,7 @@ func computeProductAllUser(transactionBytes []byte) []byte {
 
 	for _, record := range recordTransaction{
 		tran := record.Record
+
 		 _, ok := UserOperateProductMap[tran.Toid]
 		if ok == false {
 			UserOperateProductMap[tran.Toid] = &ProductProcess{ProcessAmount:0.0}
@@ -185,7 +184,57 @@ func computeProductAllUser(transactionBytes []byte) []byte {
 
 }
 
+func computeOrgnazitionAllProduct(transactionBytes []byte) OrganizationAsset {
 
+	var organizationAsset OrganizationAsset
+	var recordTransaction []RecordTransaction
+	err := json.Unmarshal(transactionBytes, &recordTransaction)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	organizationAsset.ProductMap = make(map[string]*ProductAsset)
+	AlreadyCreateUser := false
+	for _, record := range recordTransaction{
+		tran := record.Record
+
+		_, ok := organizationAsset.ProductMap[tran.Productid]
+		if !ok {
+			organizationAsset.ProductMap[tran.Productid] = &ProductAsset{ID:tran.Productid}
+		}
+		organizationAsset.TransactionNum += 1
+		organizationAsset.Balance += tran.Amount * tran.Price
+
+		organizationAsset.ProductMap[tran.Productid].TransactionNum += 1
+		organizationAsset.ProductMap[tran.Productid].Balance += tran.Amount * tran.Price
+
+		if AlreadyCreateUser == false {
+			//organizationAsset.ProductMap[tran.Organizationid].UserMap = make(map[string]*UserAsset)
+		}
+		AlreadyCreateUser = true
+		//_, ok = organizationAsset.ProductMap[tran.Organizationid].UserMap[tran.Toid]
+		//if !ok {
+		//	organizationAsset.ProductMap[tran.Organizationid].UserMap[tran.Toid] = &UserAsset{TradingEntityID:tran.Toid}
+		//}
+		//
+		//_, ok = organizationAsset.ProductMap[tran.Organizationid].UserMap[tran.Fromid]
+		//if !ok {
+		//	organizationAsset.ProductMap[tran.Organizationid].UserMap[tran.Fromid] = &UserAsset{TradingEntityID:tran.Fromid}
+		//}
+		//
+		//organizationAsset.ProductMap[tran.Productid].UserMap[tran.Toid].AssetIncome += tran.Amount * tran.Price
+		//
+		//organizationAsset.ProductMap[tran.Productid].UserMap[tran.Fromid].AssetOutcome += tran.Amount * tran.Price
+		//
+
+	}
+	organizationAssetBytes, err  := json.Marshal(organizationAsset)
+	if err != nil {
+		fmt.Println("marshal userOperateProductMapBytes Wrong")
+	}
+	fmt.Println("organizationAssetBytes", string(organizationAssetBytes))
+
+	return organizationAsset
+}
 func findMax(num1 int64, num2 int64) int64 {
 	if num1 > num2  {
 		return num1

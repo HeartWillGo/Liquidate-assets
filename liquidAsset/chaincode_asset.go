@@ -80,12 +80,15 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.getProductSaleInformation(stub, args)
 	case args[0] == "getProductAllUser"	:
 		return t.getProductAllUser(stub, args)
-	case args[0] == "getOrganization":
-		return t.getOrganization(stub, args)
+
 	case args[0] == "createOrganization":
 		return t.createOrganization(stub, args)
+	case args[0] == "getOrganization":
+		return t.getOrganization(stub, args)
 	case args[0] == "WriteOrganization":
 		return t.WriteOrganization(stub, args)
+	case args[0] == "getOrganizationProduct":
+		return t.getOrganizationProduct(stub, args)
 
 	case args[0] == "Transaction":
 		return t.Transaction(stub, args)
@@ -97,6 +100,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.getTransactionByTransactionidRange(stub, args)
 	case args[0] == "getProductTransactionByProductID":
 		return t.getProductTransactionByProductID(stub, args)
+	case args[0] == "getTransactionByOrganizationid":
+		return t.getTransactionByOrganizationid(stub, args)
 
 	case args[0] == "query":
 		return t.query(stub, args)

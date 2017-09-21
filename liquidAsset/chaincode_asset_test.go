@@ -127,6 +127,12 @@ func checkInvoke(t *testing.T, stub *shim.MockStub, args [][]byte, checkargs str
 	case "getProductAllUser" == string(args[1]):
 		fmt.Println("start teste getProductAllUser")
 		fmt.Println("getProductAllUser", string(res.GetPayload()))
+	case "getTransactionByOrganizationid" == string(args[1]):
+		fmt.Println("start test getTransactionByOrganizationid")
+		fmt.Println("getTransactionByOrganizationid", string(res.GetPayload()))
+	case "getOrganizationProduct" == string(args[1]):
+		fmt.Println("start test getOrganizationProduct")
+		fmt.Println("getOrganizationProduct", string(res.GetPayload()))
 	}
 }
 
@@ -143,6 +149,42 @@ func TestInit(t *testing.T) {
 }
 
 func TestTransaction (t *testing.T) {
+	scc := new(SimpleChaincode)
+	stub := shim.NewMockStub("ex05", scc)
+
+	str0 := `this we arrive the init function`
+	checkInit(t, stub, [][]byte{[]byte("init"), []byte(str0)})
+
+	// generate_transdata(3)
+	//从testdata/transacion.json获取数据
+	Transactions := getTrans()
+
+
+	trans_map := make(map[string][]byte)
+
+	for _, tran := range Transactions {
+		tranBytes, err:= json.Marshal(tran)
+		if err != nil {
+			t.Fail()
+		}
+		trans_map[tran.Transactionid] = tranBytes
+		checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("Transaction"), tranBytes},string(tranBytes))
+		//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByID"), []byte(tran.Transactionid)}, string(tranBytes))
+	}
+
+	//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByUserID"), []byte("1")}, string(trans_map["1"]))
+	//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAsset"), []byte("1")}, string(trans_map["1"]))
+	//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAllProduct"),[]byte("1")}, string(trans_map["1"]))
+
+
+	//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getUserOrgProductid"), []byte("pingan"), []byte("1")}, string(trans_map["1"]))
+	checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getProductTransactionByProductID"), []byte("5")}, string(trans_map["1"]))
+
+	checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByTransactionidRange"), []byte("1"),[]byte("3")}, string(trans_map["1"]))
+
+
+}
+func TestUser (t *testing.T) {
 	scc := new(SimpleChaincode)
 	stub := shim.NewMockStub("ex05", scc)
 
@@ -211,6 +253,33 @@ func TestProduct (t *testing.T) {
 
 }
 
+func TestOrganization (t *testing.T) {
+	scc := new(SimpleChaincode)
+	stub := shim.NewMockStub("ex05", scc)
+
+	str0 := `this we arrive the init function`
+	checkInit(t, stub, [][]byte{[]byte("init"), []byte(str0)})
+
+	// generate_transdata(3)
+	//从testdata/transacion.json获取数据
+	Transactions := getTrans()
+
+
+	trans_map := make(map[string][]byte)
+
+	for _, tran := range Transactions {
+		tranBytes, err:= json.Marshal(tran)
+		if err != nil {
+			t.Fail()
+		}
+		trans_map[tran.Transactionid] = tranBytes
+		checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("Transaction"), tranBytes},string(tranBytes))
+	}
+
+	checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByOrganizationid"), []byte("pingan")}, string(trans_map["1"]))
+	checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getOrganizationProduct"), []byte("pingan")}, string(trans_map["1"]))
+
+}
 
 
 
