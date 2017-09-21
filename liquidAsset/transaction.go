@@ -171,15 +171,13 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	}
 	stub.PutState(Organizationid_Toid_Productid,value)
 
-
-
 // ================
 	return shim.Success(nil)
 }
 
-//getTransactionByID 获取某笔交易
-//args[0] functionname string
-//args[1] userid string
+// getTransactionByID 获取某笔交易
+// args[0] functionname string
+// args[1] userid string
 func (t *SimpleChaincode) getTransactionByID(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("ex02 getTransactionByID")
 
@@ -208,13 +206,11 @@ func (t *SimpleChaincode) getTransactionByID(stub shim.ChaincodeStubInterface, a
 //args[0] functionname string
 //args[1] userid string
 //args = []string {"getTransactionByUserID", "1"}
-
 func  (t *SimpleChaincode) getTransactionByUserID(stub shim.ChaincodeStubInterface, args []string) pb.Response  {
 	fmt.Println("0x03 查询userid的所有交易")
 	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
-
 	Fromid := args[1:]
 	fmt.Println("we get Fromid", Fromid)
 
@@ -314,27 +310,63 @@ func  (t *SimpleChaincode) getTransactionByUserID(stub shim.ChaincodeStubInterfa
 	}
 	buffer.WriteString("]")
 	fmt.Println(buffer.Len())
-
+	fmt.Println(buffer.String())
 	return shim.Success(buffer.Bytes())
 }
 
+//得到某一交易,
 
-//得到某一用户的所有资产详情
 //args[0] functionname string
 //args[1] userid string
-//args = []string {"getUserAsset", "1"}
-func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("0x05 Enter in getUserAsset")
-	resp := t.getTransactionByUserID(stub, args)
-	if resp.Status != shim.OK {
-		return shim.Error("getUserAssetFailed")
-	}
-	asset := computeAssetByTransacitonid(args[1], resp.GetPayload())
-	assetBytes, err := json.Marshal(asset)
-	if err != nil {
-		fmt.Println("marshal wrong")
-	}
-	fmt.Println(string(assetBytes))
+//args = []string {"getTransactionByTransactionidRange", "startkey","endkey"}
+func  (t *SimpleChaincode) getTransactionByTransactionidRange(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-	return shim.Success(assetBytes)
+	fmt.Println("0x04 getTransactionByTransactionidRange")
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+	if len(args) < 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+
+	startKey := args[1]
+	endKey := args[2]
+
+	resultsIterator, err := stub.GetStateByRange(startKey, endKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	defer resultsIterator.Close()
+
+	// buffer is a JSON array containing QueryResults
+	var buffer bytes.Buffer
+	buffer.WriteString("[")
+
+	bArrayMemberAlreadyWritten := false
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		// Add a comma before array members, suppress it for the first array member
+		if bArrayMemberAlreadyWritten == true {
+			buffer.WriteString(",")
+		}
+		buffer.WriteString("{\"Key\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(queryResponse.Key)
+		buffer.WriteString("\"")
+
+		buffer.WriteString(", \"Record\":")
+		// Record is a JSON object, so we write as-is
+		buffer.WriteString(string(queryResponse.Value))
+		buffer.WriteString("}")
+		bArrayMemberAlreadyWritten = true
+	}
+	buffer.WriteString("]")
+
+
+	return shim.Success(buffer.Bytes())
+
+
 }

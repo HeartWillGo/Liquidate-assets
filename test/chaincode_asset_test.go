@@ -36,7 +36,7 @@ import (
 //	Parentorder     string `json:"parentorder"`
 //	Suborder        string `json:"suborder"`
 //	Payid           string `json:"payid"`
-//	//交易头部
+//	交易头部
 //	Transtype       string `json:"transtype"`
 //	Fromtype        int    `json:"fromtype"`
 //	Fromid          string `json:"fromid"`

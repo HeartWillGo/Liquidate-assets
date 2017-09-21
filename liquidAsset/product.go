@@ -3,67 +3,50 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
+	"bytes"
 )
+
+//产品
+type Product struct {
+	Productid      string  `json:"productid"`
+	Productname    string  `json:"productname"`
+	Producttype    int     `json:"producttype"`
+	Organizationid string  `json:"organizationid"`
+	Amount         float64 `json:"amount"`
+	Price          float64 `json:"price"`
+}
+
 //createProduct 创建产品
 func (t *SimpleChaincode) CreateProduct(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("ex02 CreateProduct")
+	fmt.Println("ex11 CreateProduct")
 
-	var ProductID string      //产品id
-	var ProductName int       //产品名称
-	var ProductType int       //产品类型
-	var OrganizationID string //产品所属机构id
-	var Portion int           //产品份额
-	var Price int             //价格
+
+
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+
 	var product Product
-
-	if len(args) != 7 {
-		return shim.Error("Incorrect number of arguments. Expecting 6")
-	}
-
-	ProductID = args[1]
-	var err error
-	ProductName, err = strconv.Atoi(args[2])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding：Number ")
-	}
-	ProductType, err = strconv.Atoi(args[3])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding：Number ")
-	}
-	OrganizationID = args[4]
-	Portion, err = strconv.Atoi(args[5])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding：Number ")
-	}
-	Price, err = strconv.Atoi(args[6])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding：Number ")
-	}
-	product.ProductID = ProductID
-	product.ProductName = ProductName
-	product.ProductType = ProductType
-	product.OrganizationID = OrganizationID
-	product.Portion = Portion
-	product.Price = Price
-
-	jsons_product, err := json.Marshal(product) //转换成JSON返回的是byte[]
+	err := json.Unmarshal([]byte(args[1]), &product)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-
-	productinfo, err := stub.GetState(ProductID)
+	productInfo, err := json.Marshal(product)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	productByte, err := stub.GetState(product.Productid)
 	if err != nil {
 		return shim.Error("failed to get productID")
-	} else if productinfo != nil {
-		return shim.Error(string(productinfo) + "\t already exists")
+	} else if productByte != nil {
+		return shim.Error(string(product.Productid) + "\t already exists")
 	}
 
 	// Write the state to the ledger
-	err = stub.PutState(args[1], jsons_product)
+	err = stub.PutState(product.Productid, productInfo)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -94,59 +77,101 @@ func (t *SimpleChaincode) getProduct(stub shim.ChaincodeStubInterface, args []st
 	fmt.Printf("  ProductInfo  = %d  \n", ProductInfo)
 	return shim.Success(ProductInfo)
 }
-//WriteProduct 修改产品
+//TODO WriteProduct 修改产品
 func (t *SimpleChaincode) WriteProduct(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("ex02 WriteProduct")
 
-	var ProductID string      //产品id
-	var ProductName int       //产品名称
-	var ProductType int       //产品类型
-	var OrganizationID string //产品所属机构id
-	var Portion int           //产品份额
-	var product Product
-
-	if len(args) != 6 {
-		return shim.Error("Incorrect number of arguments. Expecting 5")
-	}
-	var err error
-	ProductID = args[1]
-	ProductName, err = strconv.Atoi(args[2])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding：Number ")
-	}
-	ProductType, err = strconv.Atoi(args[3])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding：Number ")
-	}
-	OrganizationID = args[4]
-	Portion, err = strconv.Atoi(args[5])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding：Number ")
-	}
-	productinfo , err := stub.GetState(ProductID)
-	if err != nil {
-		return shim.Error("failed to get productinfo")
-	} else if productinfo == nil {
-		return shim.Error("product not exists")
-	}
-	err = json.Unmarshal(productinfo, &product)
-
-	product.ProductID = ProductID
-	product.ProductName = ProductName
-	product.ProductType = ProductType
-	product.OrganizationID = OrganizationID
-	product.Portion = Portion
-
-	jsons_product, err := json.Marshal(product) //转换成JSON返回的是byte[]
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	// Write the state to the ledger
-	err = stub.PutState(args[1], jsons_product)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-
-	fmt.Printf(" CreateProduct success \n")
 	return shim.Success(nil)
+}
+
+
+//根据productid得到该产品的所有交易信息
+func (t *SimpleChaincode) getProductTransactionByProductID(stub shim.ChaincodeStubInterface, args []string) pb.Response{
+	fmt.Println("0x07 getProductTransactionByProductID")
+
+	if len(args) != 2{
+		return shim.Error("Expecting 2, you are wrong")
+	}
+	productid := args[1:]
+
+	// This will execute a key range query on all keys starting with 'Productid
+	transactionProductidResultIterator, err := stub.GetStateByPartialCompositeKey("Productid~Transactionid", productid)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	defer transactionProductidResultIterator.Close()
+
+	bArrayMemberAlreadyWritten := false
+	var buffer bytes.Buffer
+	buffer.WriteString("[")
+	for transactionProductidResultIterator.HasNext() {
+		// Note that we don't get the value (2nd return variable), we'll just get the marble name from the composite key
+		queryResponse, err := transactionProductidResultIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		if bArrayMemberAlreadyWritten == true {
+			buffer.WriteString(",")
+		}
+
+		objectType, compositeKeyParts, err := stub.SplitCompositeKey(queryResponse.Key)
+		if err != nil {
+			return shim.Error("we cannot splitcompositekey")
+		}
+		if objectType != "Productid~Transactionid" {
+			return shim.Error("object is not we want %s"+ productid[0])
+		}
+		transactionid := compositeKeyParts[len(compositeKeyParts)-1]
+
+		transactionBytes,err := stub.GetState(transactionid)
+		if err != nil {
+			return shim.Error("the transactionid is not put in the ledger")
+		}
+		buffer.WriteString("{\"Key\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(transactionid)
+		buffer.WriteString("\"")
+
+		buffer.WriteString(", \"Record\":")
+		// Record is a JSON object, so we write as-is
+		fmt.Println("what the fuck", string(transactionBytes))
+		buffer.WriteString(string(transactionBytes))
+		buffer.WriteString("}")
+		bArrayMemberAlreadyWritten = true
+	}
+
+	buffer.WriteString("]")
+	fmt.Println(buffer.Len())
+	return shim.Success(buffer.Bytes())
+
+}
+//得到某一产品的售卖汇总
+func (t *SimpleChaincode) getProductSaleInformation(stub shim.ChaincodeStubInterface, args []string) pb.Response{
+	fmt.Println("0x08 Enter in getProductSaleInformation")
+	resp := t.getProductTransactionByProductID(stub, args)
+	if resp.Status != shim.OK {
+		return shim.Error("getProductTransactionByProductID Failed")
+	}
+	asset := computeProductSaleInformation(resp.GetPayload())
+	assetBytes, err := json.Marshal(asset)
+	if err != nil {
+		fmt.Println("marshal wrong")
+	}
+	fmt.Println(string(assetBytes))
+
+	return shim.Success(assetBytes)
+
+}
+//得到某一产品的购买用户
+func (t *SimpleChaincode) getProductAllUser(stub shim.ChaincodeStubInterface, args []string) pb.Response{
+	fmt.Println("0x08 Enter in getProductSaleInformation")
+	resp := t.getProductTransactionByProductID(stub, args)
+	if resp.Status != shim.OK {
+		return shim.Error("getProductTransactionByProductID Failed")
+	}
+	AllUser := computeProductAllUser(resp.GetPayload())
+
+	fmt.Println(string(AllUser))
+
+	return shim.Success(AllUser)
+
 }

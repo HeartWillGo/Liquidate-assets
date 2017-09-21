@@ -93,8 +93,6 @@ func (transaction Transaction) toString() string {
 	return toJson(transaction)
 }
 
-
-
 func getTrans() []Transaction {
 	raw, err := ioutil.ReadFile("../testdata/transaction.json")
 	if err != nil {
@@ -102,7 +100,6 @@ func getTrans() []Transaction {
 		os.Exit(1)
 	}
 
-	fmt.Println("raw",string(raw))
 	var c []Transaction
 	json.Unmarshal(raw, &c)
 	return c

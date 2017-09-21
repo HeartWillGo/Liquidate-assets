@@ -25,6 +25,8 @@ type Asset struct {
 }
 type OrganizationAsset struct {
 	ID             string  `json:"id"`
+	StatisticDate   string `json:"statistic_date"`
+
 	Type           int      `json:"type"`
 	TransactionNum int64    `json:"transactionnum"`
 	TradestartTime int64    `json:"tradestarttime"`
@@ -38,6 +40,8 @@ type OrganizationAsset struct {
 }
 type ProductAsset struct {
 	ID             string `json:"id"`
+	StatisticDate   string `json:"statistic_date"`
+
 	Tradestarttime int64    `json:"tradestarttime"`
 	Tradeendtime   int64    `json:"tradeendtime"`
 	TransactionNum int64  `json:"transactionum"`
@@ -50,7 +54,7 @@ type RecordTransaction struct {
 	Key    string `json:"Key"`
 	Record Transaction `json:"Record"`
 }
-func computeAssetByTransacitonid(statisticID string,  transactionBytes []byte) Asset {
+func computeAssetByUserID(statisticID string,  transactionBytes []byte) Asset {
 	var asset Asset
 	var recordTransaction []RecordTransaction
 	asset.TradingEntityID = statisticID
@@ -131,6 +135,56 @@ func computeAssetByTransacitonid(statisticID string,  transactionBytes []byte) A
 	return asset
 
 }
+func computeProductSaleInformation(transactionBytes []byte) ProductAsset {
+	var productAsset ProductAsset
+	var recordTransaction []RecordTransaction
+
+	err := json.Unmarshal(transactionBytes, &recordTransaction)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	productAsset.StatisticDate = fmt.Sprintf("%v", time.Now().Unix())
+
+	for _, record := range recordTransaction{
+		productAsset.TransactionNum += 1
+		tran := record.Record
+		productAsset.Balance += tran.Amount * tran.Price
+		productAsset.ID = tran.Productid
+		productAsset.Tradestarttime = findMin(productAsset.Tradestarttime, tran.Transactiondate)
+		productAsset.Tradeendtime   = findMax(productAsset.Tradeendtime, tran.Transactiondate)
+	}
+	return productAsset
+
+}
+
+func computeProductAllUser(transactionBytes []byte) []byte {
+
+	var recordTransaction []RecordTransaction
+	var UserOperateProductMap = make(map[string]*ProductProcess)
+	err := json.Unmarshal(transactionBytes, &recordTransaction)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	for _, record := range recordTransaction{
+		tran := record.Record
+		 _, ok := UserOperateProductMap[tran.Toid]
+		if ok == false {
+			UserOperateProductMap[tran.Toid] = &ProductProcess{ProcessAmount:0.0}
+		}
+		UserOperateProductMap[tran.Toid].ProcessAmount += tran.Amount * tran.Price
+		fmt.Println(UserOperateProductMap[tran.Toid].ProcessAmount)
+
+	}
+	UserOperateProductMapBytes, err  := json.Marshal(UserOperateProductMap)
+	if err != nil {
+		fmt.Println("marshal userOperateProductMapBytes Wrong")
+	}
+
+	return UserOperateProductMapBytes
+
+}
+
 
 func findMax(num1 int64, num2 int64) int64 {
 	if num1 > num2  {

@@ -10,45 +10,42 @@ import (
 
 )
 
+
+//机构
+type Organization struct {
+	OrganizationID   string `json:"organizationid"`   //机构id
+	OrganizationName string `json:"organizationname"` //机构名称
+	OrganizationType int    `json:"organizationtype"` //机构类型
+}
+
 //createOrganization
 func (t *SimpleChaincode) createOrganization(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("ex02 createOrganization")
 
-	var OrganizationID string    //机构id
-	var OrganizationName string  //机构名称
-	var OrganizationType int     //机构类型
-	var organization Organizaton //机构
 
-	if len(args) != 4 {
+
+	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
 
-	// Initialize the chaincode
-	OrganizationID = args[1]
-	OrganizationName = args[2]
+	var organization Organization
 
-
-	OrganizationType, err := strconv.Atoi(args[3])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding：Number ")
-	}
-	organization.OrganizationID = OrganizationID
-	organization.OrganizationName = OrganizationName
-	organization.OrganizationType = OrganizationType
-
-	jsons_organization, err := json.Marshal(organization) //转换成JSON返回的是byte[]
+	err := json.Unmarshal([]byte(args[1]), &organization)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 
-	orginfo, err := stub.GetState(OrganizationID)
+
+
+	OrganizationBytes, err := stub.GetState(organization.OrganizationID)
 	if err != nil {
 		return shim.Error("failed to get orginfo")
-	} else if orginfo != nil {
-		return shim.Error(string(orginfo) + "\t is already exists")
+	} else if OrganizationBytes != nil {
+		return shim.Error(string(OrganizationBytes) + "\t is already exists")
 	}
+
 	// Write the state to the ledger
-	err = stub.PutState(args[1], jsons_organization)
+	err = stub.PutState(organization.OrganizationID, []byte(args[1]))
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -138,4 +135,3 @@ func (t *SimpleChaincode) WriteOrganization(stub shim.ChaincodeStubInterface, ar
 
 	return shim.Success(nil)
 }
-

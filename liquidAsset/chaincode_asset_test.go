@@ -99,16 +99,34 @@ func checkInvoke(t *testing.T, stub *shim.MockStub, args [][]byte, checkargs str
 	case "getTransactionByID" == string(args[1]):
 
 		if string(res.GetPayload()) != checkargs {
-				t.FailNow()
-			}
+			t.FailNow()
+		}
 	case "getTransactionByUserID" == string(args[1]):
 		fmt.Println("start test getTransactionByUserID")
-		fmt.Println("transactionByUserID")
-
-
-	case "getUserAsset"	== string(args[1]):
+		fmt.Println("transactionByUserID", string(res.GetPayload()))
+	case "getTransactionByTransactionidRange" == string(args[1]):
+		fmt.Println("start test getTransactionByTransactionidRange")
+		fmt.Println("getTransactionByTransactionidRange", string(res.GetPayload()))
+	case "getUserAsset" == string(args[1]):
 		fmt.Println("start test getUserAsset")
 		fmt.Println("UserAsset", string(res.GetPayload()))
+
+	case "getUserAllProduct" == string(args[1]):
+		fmt.Println("start test getUserAllProduct")
+		fmt.Println("getUserAllProduct", string(res.GetPayload()))
+	case "getUserOrgProductid" == string(args[1]):
+		fmt.Println("start test getUserOrgProductid")
+		fmt.Println("getUserOrgProductid", string(res.GetPayload()))
+
+	case "getProductTransactionByProductID" == string(args[1]):
+		fmt.Println("start teste getProductTransactionByProductID")
+		fmt.Println("getProductTransactionByProductID", string(res.GetPayload()))
+	case "getProductSaleInformation" == string(args[1]):
+		fmt.Println("start teste getProductSaleInformation")
+		fmt.Println("getProductSaleInformation", string(res.GetPayload()))
+	case "getProductAllUser" == string(args[1]):
+		fmt.Println("start teste getProductAllUser")
+		fmt.Println("getProductAllUser", string(res.GetPayload()))
 	}
 }
 
@@ -130,8 +148,12 @@ func TestTransaction (t *testing.T) {
 
 	str0 := `this we arrive the init function`
 	checkInit(t, stub, [][]byte{[]byte("init"), []byte(str0)})
+
 	// generate_transdata(3)
+	//从testdata/transacion.json获取数据
 	Transactions := getTrans()
+
+
 	trans_map := make(map[string][]byte)
 
 	for _, tran := range Transactions {
@@ -141,14 +163,53 @@ func TestTransaction (t *testing.T) {
 		}
 		trans_map[tran.Transactionid] = tranBytes
 		checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("Transaction"), tranBytes},string(tranBytes))
-		checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByID"), []byte(tran.Transactionid)}, string(tranBytes))
+		//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByID"), []byte(tran.Transactionid)}, string(tranBytes))
 	}
 
-	 checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByUserID"), []byte("1")}, string(trans_map["1"]))
-	 checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAsset"), []byte("1")}, string(trans_map["1"]))
+	//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByUserID"), []byte("1")}, string(trans_map["1"]))
+	//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAsset"), []byte("1")}, string(trans_map["1"]))
+	//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAllProduct"),[]byte("1")}, string(trans_map["1"]))
+
+
+	//checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getUserOrgProductid"), []byte("pingan"), []byte("1")}, string(trans_map["1"]))
+	checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getProductTransactionByProductID"), []byte("5")}, string(trans_map["1"]))
+
+	checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByTransactionidRange"), []byte("1"),[]byte("3")}, string(trans_map["1"]))
+
 
 }
 
+func TestProduct (t *testing.T) {
+	scc := new(SimpleChaincode)
+	stub := shim.NewMockStub("ex05", scc)
+
+	str0 := `this we arrive the init function`
+	checkInit(t, stub, [][]byte{[]byte("init"), []byte(str0)})
+
+	// generate_transdata(3)
+	//从testdata/transacion.json获取数据
+	Transactions := getTrans()
+
+
+	trans_map := make(map[string][]byte)
+
+	for _, tran := range Transactions {
+		tranBytes, err:= json.Marshal(tran)
+		if err != nil {
+			t.Fail()
+		}
+		trans_map[tran.Transactionid] = tranBytes
+		checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("Transaction"), tranBytes},string(tranBytes))
+	}
+
+	checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByUserID"), []byte("1")}, string(trans_map["1"]))
+
+	checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getProductTransactionByProductID"), []byte("5")}, string(trans_map["1"]))
+	checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getProductSaleInformation"), []byte("5")}, string(trans_map["1"]))
+	checkInvoke(t, stub, [][]byte{[]byte("invoke"), []byte("getProductAllUser"), []byte("5")}, string(trans_map["1"]))
+
+
+}
 
 
 

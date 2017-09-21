@@ -358,22 +358,3 @@ args4:产品份额
 response 参数: 
 {” ID “:”XXX”,” ProductName “:”xxx”,” ProductType”:”xxx” ，”OrganizationID”：”xxx”，”Portion”：”xxx” }
 ```
-```
-getUserAsset #查询用户资产 
-request 参数 
-args[0] 用户ID 
-response 参数： 
-{“ID”:”XXX”, 
-” Name”:”XXX”, 
-“Identification_type”:”XXX”, 
-“Identification”:”XXX”, 
-“Sex”:”XXX”, 
-“Birthday”:”XXX”, 
-“BankCard”:”XXX”, 
-“PhonoNumber”:”XXX”, 
-” ID “:”XXX”, 
-“ProductName “:”xxx”, 
-” ProductType”:”xxx” ， 
-“OrganizationID”： 
-“xxx”，”Portion”：”xxx”}
-```

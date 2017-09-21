@@ -19,9 +19,10 @@ type SimpleChaincode struct {
 
 type ProductProcess struct {
 	ProcessType   int `json:"processtype"`   //操作类型
-	ProcessAmount int `json:"processamount"` //操作份额
-	ProcessPrice  int `json:"ProcessPrice"`  //价格
+	ProcessAmount float64 `json:"processamount"` //操作份额
+	ProcessPrice  float64 `json:"ProcessPrice"`  //价格
 }
+
 
 //资金
 type Fund struct {
@@ -29,27 +30,6 @@ type Fund struct {
 	Amount int    `json:"amount"` //卡上剩余金额
 
 }
-
-//产品
-type Product struct {
-	ProductID      string `json:"productid"`      //产品id
-	ProductName    int    `json:"productname"`    //产品名称
-	ProductType    int    `json:"producttype"`    //产品类型
-	OrganizationID string `json:"organizationid"` //产品所属机构id
-	Portion        int    `json:"portion"`        //产品份额
-	Price          int    `json:"price"`          //单价
-
-}
-
-//机构
-type Organizaton struct {
-	OrganizationID   string `json:"organizationid"`   //机构id
-	OrganizationName string `json:"organizationname"` //机构名称
-	OrganizationType int    `json:"organizationtype"` //机构类型
-	ProductMap 	  map[string](map[string]Transaction) `json:"productmap"`
-
-}
-
 
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("ex02 Init")
@@ -78,24 +58,34 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case args[0] == "getUserAsset":
 		fmt.Println("entering getuesrAsset")
 		return t.getUserAsset(stub, args)
-
-	case args[0] == "createOrganization":
-		return t.createOrganization(stub, args)
-	case args[0] == "CreateProduct":
-		return t.CreateProduct(stub, args)
-
-	case args[0] == "getProduct":
-		return t.getProduct(stub, args)
-	case args[0] == "getOrganization":
-		return t.getOrganization(stub, args)
+	case args[0] == "getUserOrgProductid":
+		fmt.Println("entering getUserOrgProductid")
+		return t.getUserOrgProductid(stub, args)
+	case args[0]  == "getUserAllProduct":
+		fmt.Println("entering getUserAllProduct")
+		return t.getUserAllProduct(stub, args)
 	case args[0] == "getUser":
 		return t.getUser(stub, args)
 	case args[0] == "WriteUser":
 		return t.WriteUser(stub, args)
-	case args[0] == "WriteOrganization":
-		return t.WriteOrganization(stub, args)
+
+
+	case args[0] == "CreateProduct":
+		return t.CreateProduct(stub, args)
+	case args[0] == "getProduct":
+		return t.getProduct(stub, args)
 	case args[0] == "WriteProduct":
 		return t.WriteProduct(stub, args)
+	case args[0] == "getProductSaleInformation":
+		return t.getProductSaleInformation(stub, args)
+	case args[0] == "getProductAllUser"	:
+		return t.getProductAllUser(stub, args)
+	case args[0] == "getOrganization":
+		return t.getOrganization(stub, args)
+	case args[0] == "createOrganization":
+		return t.createOrganization(stub, args)
+	case args[0] == "WriteOrganization":
+		return t.WriteOrganization(stub, args)
 
 	case args[0] == "Transaction":
 		return t.Transaction(stub, args)
@@ -103,6 +93,11 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.getTransactionByID(stub, args)
 	case args[0] == "getTransactionByUserID":
 		return t.getTransactionByUserID(stub, args)
+	case args[0] == "getTransactionByTransactionidRange":
+		return t.getTransactionByTransactionidRange(stub, args)
+	case args[0] == "getProductTransactionByProductID":
+		return t.getProductTransactionByProductID(stub, args)
+
 	case args[0] == "query":
 		return t.query(stub, args)
 	default:
@@ -113,33 +108,21 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 }
 // query callback representing the query of a chaincode
 func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	var A string // Entities
 	var err error
 
 	if len(args) != 2 {
-		return shim.Error("Incorrect number of arguments. Expecting name of the person to query")
+		return shim.Error("Incorrect number of arguments. Expecting name of to query")
 	}
 
-	A = args[1]
+	key := args[1]
 
 	// Get the state from the ledger
-	Avalbytes, err := stub.GetState(A)
+	ValueBytes, err := stub.GetState(key)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-	if err != nil {
-		jsonResp := "{\"Error\":\"Failed to get state for " + A + "\"}"
-		return shim.Error(jsonResp)
-	}
 
-	if Avalbytes == nil {
-		jsonResp := "{\"Error\":\"Nil amount for " + A + "\"}"
-		return shim.Error(jsonResp)
-	}
-
-	jsonResp := "{\"Name\":\"" + A + "\",\"Amount\":\"" + string(Avalbytes) + "\"}"
-	fmt.Printf("Query Response:%s\n", jsonResp)
-	return shim.Success(Avalbytes)
+	return shim.Success(ValueBytes)
 }
 
 func main() {
