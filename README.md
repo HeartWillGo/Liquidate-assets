@@ -15,7 +15,7 @@ getOrganization #创建机构
 WriteUser
 WriteProduct
 WriteOrganization 
-[]
+[sorry]
 ##
 getTransactionByUserID #根据UserID获取某个用户下的所有交易
 getUserAsset #获取某一用户的资产详情
