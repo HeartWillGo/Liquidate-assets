@@ -1,7 +1,7 @@
 __
 # Liquidate-assets
 这是一个关于统计用户的区块链智能合约，机构，产品，用户之间的资产统计。
-
+```
 ##主要函数
 CreateUser #创建用户 
 getUser #查询用户
@@ -9,6 +9,8 @@ CreateProduct #创建产品
 getProduct #得到产品
 createOrganization #创建机构 
 getOrganization #创建机构 
+
+
 #TODO
 WriteUser
 WriteProduct
@@ -36,7 +38,7 @@ getTransactionByID #根据交易ID获取交易数据
 getTransactionByTransactionidRange #获取在某个交易ID范围内的数据
 
 
-
+```
 ##数据结构设计
 
 ###用户
