@@ -7,10 +7,14 @@ CreateUser #创建用户
 getUser #查询用户
 CreateProduct #创建产品 
 getProduct #得到产品
-CreateOrgainization #创建机构 
+createOrganization #创建机构 
 getOrganization #创建机构 
-
-
+#TODO
+WriteUser
+WriteProduct
+WriteOrganization 
+[]
+##
 getTransactionByUserID #根据UserID获取某个用户下的所有交易
 getUserAsset #获取某一用户的资产详情
 getUserAllProduct #得到该用户购买的所有产品
@@ -30,6 +34,8 @@ getOrganizationUser #得到机构下所有下用户的购买信息
 Transaction # 入账 
 getTransactionByID #根据交易ID获取交易数据
 getTransactionByTransactionidRange #获取在某个交易ID范围内的数据
+
+
 
 ##数据结构设计
 
@@ -178,7 +184,7 @@ response:
       }
 ```
 ```
-CreateOrgainization #创建机构 
+createOrganization #创建机构 
 request 参数: 
 args[0]:
 {
