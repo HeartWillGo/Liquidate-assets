@@ -157,7 +157,7 @@ func computeProductSaleInformation(transactionBytes []byte) ProductAsset {
 
 }
 
-func computeProductAllUser(transactionBytes []byte) []byte {
+func computeProductAllUser(transactionBytes []byte) ProductAsset {
 
 	var recordTransaction []RecordTransaction
 	var productAsset ProductAsset
@@ -173,7 +173,7 @@ func computeProductAllUser(transactionBytes []byte) []byte {
 		 _, ok := productAsset.UserMap[tran.Toid]
 		if ok == false {
 			productAsset.UserMap[tran.Toid] = &UserAsset{TradingEntityID:tran.Toid}
-			productAsset.ID = tran.Organizationid
+			productAsset.ID = tran.Productid
 			productAsset.StatisticDate =  fmt.Sprintf("%v", time.Now().Unix())
 
 		}
@@ -182,12 +182,9 @@ func computeProductAllUser(transactionBytes []byte) []byte {
 		productAsset.UserMap[tran.Toid].AssetBalance += tran.Amount * tran.Price
 		productAsset.UserMap[tran.Toid].TransactionNum += 1
 	}
-	productAssetBytes, err  := json.Marshal(productAsset)
-	if err != nil {
-		fmt.Println("marshal userOperateProductMapBytes Wrong")
-	}
 
-	return productAssetBytes
+
+	return productAsset
 
 }
 
@@ -208,6 +205,7 @@ func computeOrgnazitionAllProduct(transactionBytes []byte) OrganizationAsset {
 		_, ok := organizationAsset.ProductMap[tran.Productid]
 		if !ok {
 			organizationAsset.ProductMap[tran.Productid] = &ProductAsset{ID:tran.Productid}
+			organizationAsset.ID = tran.Organizationid
 		}
 		organizationAsset.TransactionNum += 1
 		organizationAsset.Balance += tran.Amount * tran.Price

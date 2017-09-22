@@ -164,9 +164,31 @@ func (t *SimpleChaincode) getProductAllUser(stub shim.ChaincodeStubInterface, ar
 	if resp.Status != shim.OK {
 		return shim.Error("getProductTransactionByProductID Failed")
 	}
-	AllUser := computeProductAllUser(resp.GetPayload())
+	productAsset := computeProductAllUser(resp.GetPayload())
+	productAssetBytes, err  := json.Marshal(productAsset)
+	if err != nil {
+		fmt.Println("marshal userOperateProductMapBytes Wrong")
+	}
+
+	return shim.Success(productAssetBytes)
+
+}
+
+//得到某一产品的某一用户的购买情况
+func (t *SimpleChaincode) getProductOneUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("0x08 Enter in getProductOneUser")
+	resp := t.getProductTransactionByProductID(stub, args[1:])
+	if resp.Status != shim.OK {
+		return shim.Error("getProductTransactionByProductID Failed")
+	}
+	productAsset := computeProductAllUser(resp.GetPayload())
+	UserAssetBytes, err  := json.Marshal(productAsset.UserMap[args[1]])
+
+	if err != nil {
+		fmt.Println("marshal userOperateProductMapBytes Wrong")
+	}
 
 
-	return shim.Success(AllUser)
+	return shim.Success(UserAssetBytes)
 
 }

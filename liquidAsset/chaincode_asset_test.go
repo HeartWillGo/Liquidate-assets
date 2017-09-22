@@ -156,6 +156,10 @@ func checkInvokeProduct(t *testing.T, stub *shim.MockStub, args [][]byte, checka
 		fmt.Println("start teste getProductAsset")
 		fmt.Println("getProductAsset", string(res.GetPayload()))
 
+	case "getProductOneUser" == string(args[1]):
+		fmt.Println("start teste getProductOneUser")
+		fmt.Println("getProductOneUser", string(res.GetPayload()))
+
 	case "getProductAllUser" == string(args[1]):
 		fmt.Println("start teste getProductAllUser")
 		fmt.Println("getProductAllUser", string(res.GetPayload()))
@@ -310,6 +314,7 @@ func TestProduct (t *testing.T) {
 	checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("getProductTransactionByProductID"), []byte("productid0")}, string("d"))
 	checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("getProductAsset"), []byte("productid0")}, string("d"))
 	checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("getProductAllUser"), []byte("productid0")}, string("d"))
+	checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("getProductOneUser"),[]byte("12324"), []byte("productid0")}, string("d"))
 
 
 }

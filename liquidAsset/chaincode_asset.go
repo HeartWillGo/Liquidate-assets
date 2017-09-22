@@ -86,6 +86,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.getProductAllUser(stub, args)
 	case args[0] == "getProductTransactionByProductID":
 		return t.getProductTransactionByProductID(stub, args)
+	case args[0] == "getProductOneUser":
+		return t.getProductOneUser(stub, args)
 
 
 
