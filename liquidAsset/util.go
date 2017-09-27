@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"time"
+	"strconv"
 )
 
 func RandStr(strlen int) string {
@@ -27,14 +28,13 @@ func RandStr(strlen int) string {
 }
 
 func RandInt(strlen int) string {
-	rand.Seed(time.Now().Unix())
 
 	var data string
-	var num int
 	for i := 0; i < strlen; i++ {
-		num = rand.Intn(57) + 65
+		num := strconv.Itoa(rand.Intn(20))
 
-		data += string(num)
+		data += num
+
 	}
 	return data
 }

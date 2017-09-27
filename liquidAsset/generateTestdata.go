@@ -23,27 +23,39 @@ func generate_transdata(number int) {
 		var transaction Transaction
 		var idx string
 		idx = strconv.Itoa(i)
-		transaction.SID  =  RandStr(8)
-		transaction.ReceiverSID = "20170929"+ idx
-		transaction.OriginSID  = "20171023"+idx
-		transaction.RequestSerial = "20171034"+ idx
-		transaction.NextRequestSerial = "20171034"+ idx
+		//精确到秒
+		data :=  time.Now().Format("20060102150405")
+		transaction.SID  =  data + idx
+		transaction.ReceiverSID = data +idx
+		transaction.OriginSID  = data +idx
+		transaction.RequestSerial = data + idx
+		transaction.NextRequestSerial = data + idx
 		transaction.Proposaltime =  time.Now().Unix()
-		transaction.Transactionid = "transactionid" + idx
+
+		transaction.Transactionid = "transactionid" + data + idx
 		transaction.Transactiondate = time.Now().Unix()
 		transaction.Parentorder = idx
 		transaction.Suborder = idx
 		transaction.Payid = idx
 		transaction.Transtype = idx
 		transaction.Fromtype = 1
-		transaction.Fromid = "userid" + strconv.Itoa(i/3)
+		transaction.Fromid = "0000000000002" + strconv.Itoa(i/3)
 		transaction.Totype = 1
-		transaction.Toid = RandStr(8)
-		transaction.Productid = "productid" + idx
-		transaction.Productinfo = "wegood" + "i%3"
-		transaction.Organizationid = "pingan"
-		transaction.Amount = 4
-		transaction.Price = 9
+		transaction.Toid = "0000000000003" + strconv.Itoa(i/3)
+		transaction.Productid = "productid" + strconv.Itoa(i%3)
+		transaction.Productinfo = "trohs si efil"
+		transaction.Organizationid = "nagnip"
+		random, err := strconv.Atoi(RandInt(2))
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		transaction.Amount = float64(random)
+		random, err = strconv.Atoi(RandInt(1))
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+		transaction.Price =  float64(random)
 		transactionBytes, _ := json.Marshal(transaction)
 		buffer.WriteString(string(transactionBytes))
 		AlreadyWrite = true
@@ -67,7 +79,7 @@ func generate_userData(number int) {
 		var idx string
 
 		idx = strconv.Itoa(i)
-		user.ID = "userid" + strconv.Itoa(i)
+		user.ID = "0000000000002" + strconv.Itoa(i/3)
 		user.Name = RandStr(8)
 		user.Identificationtype = 1
 		user.Identification = "23342"
