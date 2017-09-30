@@ -74,7 +74,6 @@ func computeAssetByUserID(statisticID string, transactionBytes []byte) UserAsset
 		//         organization ------> user
 		//         organization ------
 		tran := record.Record
-		AlreadyCreateProductMap := false
 
 		if tran.Fromid == asset.TradingEntityID {
 			asset.AssetIncome += tran.Amount * tran.Price
@@ -107,10 +106,19 @@ func computeAssetByUserID(statisticID string, transactionBytes []byte) UserAsset
 		}
 		asset.OrganizatonMap[tran.Organizationid].TransactionNum += 1
 
-		if AlreadyCreateProductMap == false {
+		AlreadyCreateProductMap := make(map[string]bool)
+
+		_, ok = AlreadyCreateProductMap[tran.Productid]
+		if !ok {
+			AlreadyCreateProductMap[tran.Productid] = false
+
+		}
+
+
+		if AlreadyCreateProductMap[tran.Productid] == false {
 			asset.OrganizatonMap[tran.Organizationid].ProductMap = make(map[string]*ProductAsset)
 		}
-		AlreadyCreateProductMap = true
+		AlreadyCreateProductMap[tran.Productid] = true
 
 		//记录产品的数据
 		//
