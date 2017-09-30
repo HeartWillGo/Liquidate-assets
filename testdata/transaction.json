@@ -64,7 +64,7 @@
     "toid": "00000000000030",
     "productid": "productid200",
     "productinfo": "trohs si efil",
-    "organizationid": "pingan",
+    "organizationid": "jinke",
     "amount": 149,
     "price": 15
   },
@@ -87,7 +87,7 @@
     "toid": "00000000000022",
     "productid": "productid0",
     "productinfo": "trohs si efil",
-    "organizationid": "pingan",
+    "organizationid": "jinke",
     "amount": 13,
     "price": 10
   },
@@ -110,7 +110,7 @@
     "toid": "00000000000031",
     "productid": "productid1",
     "productinfo": "trohs si efil",
-    "organizationid": "pingan",
+    "organizationid": "dahua",
     "amount": 195,
     "price": 2
   },
@@ -133,7 +133,7 @@
     "toid":   "00000000000022",
     "productid": "productid3",
     "productinfo": "trohs si efil",
-    "organizationid": "pingan",
+    "organizationid": "dahua",
     "amount": 718,
     "price": 19
   }

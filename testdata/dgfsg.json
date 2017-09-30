@@ -1,5 +1,5 @@
 {
-  "statistic_date": "1506750972",
+  "statistic_date": "1506755381",
   "trading_entity_id": "00000000000022",
   "transaction_num": 6,
   "asset_type": "",
@@ -10,28 +10,17 @@
   "asset_income": 3801,
   "asset_outcome": 13772,
   "organization_Map": {
-    "pingan": {
-      "id": "pingan",
+    "dahua": {
+      "id": "dahua",
       "statistic_date": "",
       "type": 0,
-      "transactionnum": 6,
+      "transactionnum": 2,
       "tradestarttime": 0,
       "tradeendtime": 0,
       "balance": 0,
-      "outcome": 3801,
-      "income": 13772,
+      "outcome": 390,
+      "income": 13642,
       "productmap": {
-        "productid0": {
-          "id": "productid0",
-          "statistic_date": "",
-          "tradestarttime": 1506396957,
-          "tradeendtime": 1506396957,
-          "transactionum": 1,
-          "balance": 0,
-          "outcome": 0,
-          "income": 130,
-          "asset": null
-        },
         "productid1": {
           "id": "productid1",
           "statistic_date": "",
@@ -40,28 +29,6 @@
           "transactionum": 1,
           "balance": 0,
           "outcome": 390,
-          "income": 0,
-          "asset": null
-        },
-        "productid100": {
-          "id": "productid100",
-          "statistic_date": "",
-          "tradestarttime": 1506396957,
-          "tradeendtime": 1506396957,
-          "transactionum": 1,
-          "balance": 0,
-          "outcome": 1062,
-          "income": 0,
-          "asset": null
-        },
-        "productid200": {
-          "id": "productid200",
-          "statistic_date": "",
-          "tradestarttime": 1506396957,
-          "tradeendtime": 1506396957,
-          "transactionum": 1,
-          "balance": 0,
-          "outcome": 2235,
           "income": 0,
           "asset": null
         },
@@ -74,6 +41,67 @@
           "balance": 0,
           "outcome": 0,
           "income": 13642,
+          "asset": null
+        }
+      },
+      "asset": null
+    },
+    "jinke": {
+      "id": "jinke",
+      "statistic_date": "",
+      "type": 0,
+      "transactionnum": 2,
+      "tradestarttime": 0,
+      "tradeendtime": 0,
+      "balance": 0,
+      "outcome": 2235,
+      "income": 130,
+      "productmap": {
+        "productid0": {
+          "id": "productid0",
+          "statistic_date": "",
+          "tradestarttime": 1506396957,
+          "tradeendtime": 1506396957,
+          "transactionum": 1,
+          "balance": 0,
+          "outcome": 0,
+          "income": 130,
+          "asset": null
+        },
+        "productid200": {
+          "id": "productid200",
+          "statistic_date": "",
+          "tradestarttime": 1506396957,
+          "tradeendtime": 1506396957,
+          "transactionum": 1,
+          "balance": 0,
+          "outcome": 2235,
+          "income": 0,
+          "asset": null
+        }
+      },
+      "asset": null
+    },
+    "pingan": {
+      "id": "pingan",
+      "statistic_date": "",
+      "type": 0,
+      "transactionnum": 2,
+      "tradestarttime": 0,
+      "tradeendtime": 0,
+      "balance": 0,
+      "outcome": 1176,
+      "income": 0,
+      "productmap": {
+        "productid100": {
+          "id": "productid100",
+          "statistic_date": "",
+          "tradestarttime": 1506396957,
+          "tradeendtime": 1506396957,
+          "transactionum": 1,
+          "balance": 0,
+          "outcome": 1062,
+          "income": 0,
           "asset": null
         },
         "productid300": {
