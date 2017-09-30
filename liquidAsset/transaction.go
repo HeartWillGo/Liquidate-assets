@@ -63,6 +63,9 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 		return shim.Error(err.Error())
 	}
 
+
+	erf,_ := json.Marshal(transaction)
+	fmt.Println("this is for ", string(erf))
 	// 以下添加各种索引
 
 	stub.GetTxTimestamp()
@@ -254,11 +257,11 @@ func (t *SimpleChaincode) getTransactionByUserID(stub shim.ChaincodeStubInterfac
 		buffer.WriteString(string(transactionBytes))
 		buffer.WriteString("}")
 		bArrayMemberAlreadyWritten = true
-
 	}
 
+
 	transactionToidResultsIterator, err := stub.GetStateByPartialCompositeKey("Toid~Transactionid",
-		[]string{"1"})
+		Fromid)
 	if err != nil {
 		return shim.Error("wrong")
 	}
@@ -295,11 +298,13 @@ func (t *SimpleChaincode) getTransactionByUserID(stub shim.ChaincodeStubInterfac
 
 		buffer.WriteString(", \"Record\":")
 		// Record is a JSON object, so we write as-is
+		fmt.Println("string(transactionBytes")
 		buffer.WriteString(string(transactionBytes))
 		buffer.WriteString("}")
 		bArrayMemberAlreadyWritten = true
 	}
 	buffer.WriteString("]")
+	fmt.Println("just make fromid, toid", buffer.String())
 	return shim.Success(buffer.Bytes())
 }
 

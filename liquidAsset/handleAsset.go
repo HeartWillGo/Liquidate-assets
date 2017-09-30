@@ -59,7 +59,7 @@ func computeAssetByUserID(statisticID string, transactionBytes []byte) UserAsset
 	var asset UserAsset
 	var recordTransaction []RecordTransaction
 	asset.TradingEntityID = statisticID
-
+	fmt.Println(string(transactionBytes))
 	err := json.Unmarshal(transactionBytes, &recordTransaction)
 	if err != nil {
 		fmt.Println("it is wrong")
@@ -68,23 +68,24 @@ func computeAssetByUserID(statisticID string, transactionBytes []byte) UserAsset
 
 	asset.StatisticDate = fmt.Sprintf("%v", time.Now().Unix())
 	asset.OrganizatonMap = make(map[string]*OrganizationAsset)
+	AlreadyCreateProductMap := make(map[string]bool)
 
 	for _, record := range recordTransaction {
 		//用户的视角 user -----> organizaition
 		//         organization ------> user
 		//         organization ------
 		tran := record.Record
-
 		if tran.Fromid == asset.TradingEntityID {
 			asset.AssetIncome += tran.Amount * tran.Price
-		} else if tran.Toid == asset.TradingEntityID {
+
+		} else if  tran.Toid == asset.TradingEntityID {
 			asset.AssetOutcome += tran.Amount * tran.Price
 		}
 		if (asset.AssetIncome - asset.AssetOutcome) < 0 {
 			fmt.Println("negative")
 		}
 		asset.TradeStartTime = findMin(asset.TradeStartTime, tran.Transactiondate)
-		asset.TradeEndTime = findMax(asset.TradeEndTime, tran.Transactiondate)
+		asset.TradeEndTime =   findMax(asset.TradeEndTime, tran.Transactiondate)
 		asset.TransactionNum += 1
 		//机构
 
@@ -93,9 +94,9 @@ func computeAssetByUserID(statisticID string, transactionBytes []byte) UserAsset
 			asset.OrganizatonMap[tran.Organizationid] = &OrganizationAsset{ID: tran.Organizationid}
 		}
 		//像这种情况orgAsset如果不存在，对其操作后，orgAsset是否立即存在
-		asset.OrganizatonMap[tran.Organizationid].TradestartTime = findMin(asset.OrganizatonMap[tran.Organizationid].TradestartTime, tran.Transactiondate)
+		//asset.OrganizatonMap[tran.Organizationid].TradestartTime = findMin(asset.OrganizatonMap[tran.Organizationid].TradestartTime, tran.Transactiondate)
 		//产品
-		asset.OrganizatonMap[tran.Organizationid].TradeendTime = findMax(asset.OrganizatonMap[tran.Organizationid].TradeendTime, tran.Transactiondate)
+		//asset.OrganizatonMap[tran.Organizationid].TradeendTime = findMax(asset.OrganizatonMap[tran.Organizationid].TradeendTime, tran.Transactiondate)
 
 		//记录机构的交易数据
 		if statisticID == tran.Fromid {
@@ -106,30 +107,23 @@ func computeAssetByUserID(statisticID string, transactionBytes []byte) UserAsset
 		}
 		asset.OrganizatonMap[tran.Organizationid].TransactionNum += 1
 
-		AlreadyCreateProductMap := make(map[string]bool)
 
-		_, ok = AlreadyCreateProductMap[tran.Productid]
-		if !ok {
-			AlreadyCreateProductMap[tran.Productid] = false
-
-		}
-
-
-		if AlreadyCreateProductMap[tran.Productid] == false {
+		if AlreadyCreateProductMap[tran.Organizationid] == false {
 			asset.OrganizatonMap[tran.Organizationid].ProductMap = make(map[string]*ProductAsset)
+			AlreadyCreateProductMap[tran.Organizationid] = true
+
 		}
-		AlreadyCreateProductMap[tran.Productid] = true
 
 		//记录产品的数据
-		//
 		_, ok = asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid]
 		if !ok {
-
 			asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid] = &ProductAsset{ID: tran.Productid}
 		}
 
-		asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].Tradeendtime = findMax(asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].Tradeendtime, tran.Transactiondate)
+		asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].Tradeendtime =   findMax(asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].Tradeendtime, tran.Transactiondate)
 		asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].Tradestarttime = findMin(asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].Tradestarttime, tran.Transactiondate)
+
+
 		if statisticID == tran.Fromid {
 			asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].Outcome += tran.Amount * tran.Price
 		} else if statisticID == tran.Toid {
