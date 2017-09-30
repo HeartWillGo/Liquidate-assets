@@ -62,17 +62,20 @@ func computeAssetByUserID(statisticID string, transactionBytes []byte) UserAsset
 
 	err := json.Unmarshal(transactionBytes, &recordTransaction)
 	if err != nil {
+		fmt.Println("it is wrong")
 		fmt.Println(err.Error())
 	}
+
 	asset.StatisticDate = fmt.Sprintf("%v", time.Now().Unix())
 	asset.OrganizatonMap = make(map[string]*OrganizationAsset)
 
-	AlreadyCreateProductMap := false
 	for _, record := range recordTransaction {
 		//用户的视角 user -----> organizaition
 		//         organization ------> user
 		//         organization ------
 		tran := record.Record
+		AlreadyCreateProductMap := false
+
 		if tran.Fromid == asset.TradingEntityID {
 			asset.AssetIncome += tran.Amount * tran.Price
 		} else if tran.Toid == asset.TradingEntityID {
@@ -110,6 +113,7 @@ func computeAssetByUserID(statisticID string, transactionBytes []byte) UserAsset
 		AlreadyCreateProductMap = true
 
 		//记录产品的数据
+		//
 		_, ok = asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid]
 		if !ok {
 

@@ -158,6 +158,8 @@ func (t *SimpleChaincode) WriteUser(stub shim.ChaincodeStubInterface, args []str
 //args = []string {"getUserAsset", "1"}
 func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("0x0203 Enter in getUserAsset")
+
+
 	resp := t.getTransactionByUserID(stub, args)
 	if resp.Status != shim.OK {
 		return shim.Error("getUserAssetFailed")

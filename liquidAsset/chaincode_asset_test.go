@@ -278,11 +278,11 @@ func TestUser (t *testing.T) {
 	getALLToHyperledger(t, stub)
 
 
-	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByUserID"),[]byte("userid0")} , string("w43"))
-	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAsset"), []byte("userid0")}, string("1"))
-	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAllProduct"), []byte("userid0")}, string(""))
-	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserOrgProductid"),  []byte("pingan"), []byte("userid0")}, string(""))
-	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserFromOrganizationAsset"),  []byte("pingan"),  []byte("userid0")}, string(""))
+	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByUserID"),[]byte("00000000000022")} , string("w43"))
+	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAsset"), []byte("00000000000022")}, string("1"))
+	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAllProduct"), []byte("userid0")}, string(""))
+	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserOrgProductid"),  []byte("pingan"), []byte("userid0")}, string(""))
+	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserFromOrganizationAsset"),  []byte("pingan"),  []byte("userid0")}, string(""))
 
 }
 
