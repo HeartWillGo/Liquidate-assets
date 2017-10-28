@@ -147,7 +147,7 @@ package main
 //	}
 //	resp := t.getTransactionByOrganizationCode(stub, args)
 //	if resp.Status != shim.OK {
-//		return shim.Error("getUserAssetFailed")
+//		return shim.Error("getIDNoAssetFailed")
 //	}
 //	productAsset := computeOrgnazitionAllProduct(resp.GetPayload())
 //	productAssetBytes, err := json.Marshal(productAsset)
@@ -168,7 +168,7 @@ package main
 //	}
 //	resp := t.getTransactionByOrganizationCode(stub, args)
 //	if resp.Status != shim.OK {
-//		return shim.Error("getUserAssetFailed")
+//		return shim.Error("getIDNoAssetFailed")
 //	}
 //	productAsset := computeOrgnazitionAllProduct(resp.GetPayload())
 //	productAssetBytes, err := json.Marshal(productAsset)
@@ -186,7 +186,7 @@ package main
 //	}
 //	resp := t.getTransactionByOrganizationCode(stub, args)
 //	if resp.Status != shim.OK {
-//		return shim.Error("getUserAssetFailed")
+//		return shim.Error("getIDNoAssetFailed")
 //	}
 //	productAsset := computeOrgnazitionAllUser(resp.GetPayload())
 //	productAssetBytes, err := json.Marshal(productAsset)

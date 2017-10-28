@@ -1,0 +1,118 @@
+{
+  "queryTime": "20171028212108",
+  "idNo": "03",
+  "tranNum": 80,
+  "startTime": "20171028210252",
+  "endTime": "20171028210749",
+  "credit": 4200,
+  "debit": 3800,
+  "balance": 400,
+  "organizationMap": {
+    "O01": {
+      "organizationCode": "O01",
+      "queryTime": "",
+      "tranNum": 26,
+      "startTime": "20171028210259",
+      "endTime": "20171028210749",
+      "credit": 1300,
+      "debit": 1300,
+      "balance": 0,
+      "productMap": {
+        "P011": {
+          "productCode": "P011",
+          "queryTime": "",
+          "tranNum": 12,
+          "startTime": "20171028210718",
+          "endTime": "20171028210311",
+          "credit": 500,
+          "debit": 700,
+          "balance": 0,
+          "idNoAsset": null
+        },
+        "P012": {
+          "productCode": "P012",
+          "queryTime": "",
+          "tranNum": 14,
+          "startTime": "20171028210749",
+          "endTime": "20171028210259",
+          "credit": 800,
+          "debit": 600,
+          "balance": 0,
+          "idNoAsset": null
+        }
+      },
+      "idNoAsset": null
+    },
+    "O02": {
+      "organizationCode": "O02",
+      "queryTime": "",
+      "tranNum": 28,
+      "startTime": "20171028210257",
+      "endTime": "20171028210731",
+      "credit": 1600,
+      "debit": 1200,
+      "balance": 0,
+      "productMap": {
+        "P021": {
+          "productCode": "P021",
+          "queryTime": "",
+          "tranNum": 16,
+          "startTime": "20171028210731",
+          "endTime": "20171028210334",
+          "credit": 900,
+          "debit": 700,
+          "balance": 0,
+          "idNoAsset": null
+        },
+        "P022": {
+          "productCode": "P022",
+          "queryTime": "",
+          "tranNum": 12,
+          "startTime": "20171028210728",
+          "endTime": "20171028210257",
+          "credit": 700,
+          "debit": 500,
+          "balance": 0,
+          "idNoAsset": null
+        }
+      },
+      "idNoAsset": null
+    },
+    "O03": {
+      "organizationCode": "O03",
+      "queryTime": "",
+      "tranNum": 26,
+      "startTime": "20171028210252",
+      "endTime": "20171028210748",
+      "credit": 1300,
+      "debit": 1300,
+      "balance": 0,
+      "productMap": {
+        "P031": {
+          "productCode": "P031",
+          "queryTime": "",
+          "tranNum": 14,
+          "startTime": "20171028210748",
+          "endTime": "20171028210302",
+          "credit": 700,
+          "debit": 700,
+          "balance": 0,
+          "idNoAsset": null
+        },
+        "P032": {
+          "productCode": "P032",
+          "queryTime": "",
+          "tranNum": 12,
+          "startTime": "20171028210725",
+          "endTime": "20171028210252",
+          "credit": 600,
+          "debit": 600,
+          "balance": 0,
+          "idNoAsset": null
+        }
+      },
+      "idNoAsset": null
+    }
+  },
+  "productMap": null
+}

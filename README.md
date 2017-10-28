@@ -18,7 +18,7 @@ WriteOrganization
 [sorry]
 ##
 getTransactionByUserID #根据UserID获取某个用户下的所有交易
-getUserAsset #获取某一用户的资产详情
+getIDNoAsset #获取某一用户的资产详情
 getUserAllProduct #得到该用户购买的所有产品
 getUserOrgProductCode #获取某个机构下产品的所有购买情况
 getUserFromOrganizationAsset #获取用户在某个机构下资产详情
@@ -258,7 +258,7 @@ response ：
 
 ```
 ```
-getUserAsset #获取某一用户的资产详情
+getIDNoAsset #获取某一用户的资产详情
 request 参数： len(args) =1 
 args[0]: "IDNo"
 response:

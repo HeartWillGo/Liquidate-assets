@@ -1,14 +1,14 @@
 package main
-//
-//import (
-//	"encoding/json"
-//	"fmt"
-//
-//	"bytes"
-//	"github.com/hyperledger/fabric/core/chaincode/shim"
-//	pb "github.com/hyperledger/fabric/protos/peer"
-//)
-//
+
+import (
+	"encoding/json"
+	"fmt"
+
+	//"bytes"
+	"github.com/hyperledger/fabric/core/chaincode/shim"
+	pb "github.com/hyperledger/fabric/protos/peer"
+)
+
 ////用户
 //type User struct {
 //	ID                 string `json:"id"`
@@ -152,29 +152,29 @@ package main
 //	return shim.Success(nil)
 //}
 //
-////得到某一用户的所有资产详情
-////args[0] functionname string
-////args[1] IDNo string
-////args = []string {"getUserAsset", "1"}
-//func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-//	fmt.Println("0x0203 Enter in getUserAsset")
-//
-//
-//	resp := t.getTransactionByIDNo(stub, args)
-//	if resp.Status != shim.OK {
-//		return shim.Error("getUserAssetFailed")
-//	}
-//	asset := computeAssetByUserID(args[1], resp.GetPayload())
-//	assetBytes, err := json.Marshal(asset)
-//	if err != nil {
-//		fmt.Println("marshal wrong")
-//	}
-//
-//	fmt.Println(string(assetBytes))
-//
-//	return shim.Success(assetBytes)
-//}
-//
+//得到某一用户的所有资产详情
+//args[0] functionname string
+//args[1] IDNo string
+//args = []string {"getIDNoAsset", "1"}
+func (t *SimpleChaincode) getIDNoAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("0x0203 Enter in getIDNoAsset")
+
+
+	resp := t.getTransactionByIDNo(stub, args)
+	if resp.Status != shim.OK {
+		return shim.Error("getIDNoAssetFailed")
+	}
+	asset := ComputeIDNoAsset(args[1], resp.GetPayload())
+	assetBytes, err := json.Marshal(asset)
+	if err != nil {
+		fmt.Println("marshal wrong")
+	}
+
+	fmt.Println(string(assetBytes))
+
+	return shim.Success(assetBytes)
+}
+////
 ////用户查询某机构购买的产品信息
 ////args []string("getUserByproductid", "organizationid", "IDNo"}
 ////return [{product1}, {product2}]
@@ -182,7 +182,7 @@ package main
 //	fmt.Println("0x06 Enter in getUserByProductCode")
 //	resp := t.getTransactionByIDNo(stub, args[1:])
 //	if resp.Status != shim.OK {
-//		return shim.Error("getUserAssetFailed")
+//		return shim.Error("getIDNoAssetFailed")
 //	}
 //	asset := computeAssetByUserID(args[2], resp.GetPayload())
 //	var buffer bytes.Buffer

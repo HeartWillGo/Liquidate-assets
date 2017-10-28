@@ -55,9 +55,9 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	//	return t.CreateUser(stub, args)
 	//case args[0] == "getUser":
 	//	return t.getUser(stub, args)
-	//case args[0] == "getUserAsset":
-	//	fmt.Println("entering getuesrAsset")
-	//	return t.getUserAsset(stub, args)
+	case args[0] == "getIDNoAsset":
+		fmt.Println("entering getuesrAsset")
+		return t.getIDNoAsset(stub, args)
 	//case args[0] == "getUserOrgProductCode":
 	//	fmt.Println("entering getUserOrgProductCode")
 	//	return t.getUserOrgProductCode(stub, args)
@@ -109,6 +109,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case args[0] == "getTransactionByOrderNoRange":
 		return t.getTransactionByOrderNoRange(stub, args)
 
+	case args[0] == "queryTransactionByIDNo":
+		return t.queryTransactionByIDNo(stub, args)
 	case args[0] == "query":
 		return t.query(stub, args)
 	default:

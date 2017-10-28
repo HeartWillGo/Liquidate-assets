@@ -1,15 +1,30 @@
 package main
-//
-//import (
-//	//"github.com/hyperledger/fabric/core/chaincode/shim"
-//	//pb "github.com/hyperledger/fabric/protos/peer"
-//
-//	"encoding/json"
-//	"fmt"
-//	"time"
-//)
-//
-//type UserAsset struct {
+
+import (
+	//"github.com/hyperledger/fabric/core/chaincode/shim"
+	//pb "github.com/hyperledger/fabric/protos/peer"
+
+	"encoding/json"
+	"fmt"
+	"time"
+	"strconv"
+)
+
+
+type IDNoAsset struct {
+	QueryTime string `json:"queryTime"`
+	IDNo      string `json:"idNo"`
+	TranNum   int `json:"tranNum"`
+	StartTime string `json:"startTime"`
+	EndTime   string `json:"endTime"`
+	Credit    float64 `json:"credit"`
+	Debit     float64 `json:"debit"`
+	Balance   float64 `json:"balance"`
+	OrganizatonMap  map[string]*OrganizationAsset `json:"organizationMap"`
+	ProductMap      map[string]*ProductAsset      `json:"productMap"`
+}
+
+//type IDNoAsset struct {
 //	StatisticDate   string                        `json:"statistic_date"`
 //	TradingEntityID string                        `json:"trading_entity_id"`
 //	TransactionNum  int                           `json:"transaction_num"`
@@ -23,8 +38,20 @@ package main
 //	OrganizatonMap  map[string]*OrganizationAsset `json:"organization_Map"`
 //	ProductMap      map[string]*ProductAsset      `json:"productmap"`
 //}
+type OrganizationAsset struct {
+	OrganizationCode string `json:"organizationCode"`
+	QueryTime        string `json:"queryTime"`
+	TranNum          int `json:"tranNum"`
+	StartTime        string `json:"startTime"`
+	EndTime          string `json:"endTime"`
+	Credit           float64 `json:"credit"`
+	Debit            float64 `json:"debit"`
+	Balance          float64 `json:"balance"`
+	ProductAssetMap map[string]*ProductAsset `json:"productMap"`
+	IDNoAssetMap    map[string]*IDNoAsset    `json:"idNoAsset"`
+}
 //type OrganizationAsset struct {
-//	ID            string `json:"id"`
+//	Orga            string `json:"id"`
 //	StatisticDate string `json:"statistic_date"`
 //
 //	Type           int     `json:"type"`
@@ -36,8 +63,20 @@ package main
 //	Income         float64 `json:"income"`
 //
 //	ProductMap map[string]*ProductAsset `json:"productmap"`
-//	UserMap    map[string]*UserAsset    `json:"asset"`
+//	UserMap    map[string]*IDNoAsset    `json:"asset"`
 //}
+type ProductAsset struct {
+	ProductCode string `json:"productCode"`
+	QueryTime   string `json:"queryTime"`
+	TranNum     int `json:"tranNum"`
+	StartTime   string `json:"startTime"`
+	EndTime     string `json:"endTime"`
+	Credit      float64 `json:"credit"`
+	Debit       float64 `json:"debit"`
+	Balance     float64 `json:"balance"`
+	IDNoAssetMap        map[string]*IDNoAsset `json:"idNoAsset"`
+}
+
 //type ProductAsset struct {
 //	ID             string                `json:"id"`
 //	StatisticDate  string                `json:"statistic_date"`
@@ -47,96 +86,94 @@ package main
 //	Balance        float64               `json:"balance"`
 //	Outcome        float64               `json:"outcome"`
 //	Income         float64               `json:"income"`
-//	UserMap        map[string]*UserAsset `json:"asset"`
+//	UserMap        map[string]*IDNoAsset `json:"asset"`
 //}
-//
-//type RecordTransaction struct {
-//	Key    string      `json:"Key"`
-//	Record Transaction `json:"Record"`
-//}
-//
-//func computeAssetByUserID(statisticID string, transactionBytes []byte) UserAsset {
-//	var asset UserAsset
-//	var recordTransaction []RecordTransaction
-//	asset.TradingEntityID = statisticID
-//	fmt.Println(string(transactionBytes))
-//	err := json.Unmarshal(transactionBytes, &recordTransaction)
-//	if err != nil {
-//		fmt.Println("it is wrong")
-//		fmt.Println(err.Error())
-//	}
-//
-//	asset.StatisticDate = fmt.Sprintf("%v", time.Now().Unix())
-//	asset.OrganizatonMap = make(map[string]*OrganizationAsset)
-//	AlreadyCreateProductMap := make(map[string]bool)
-//
-//	for _, record := range recordTransaction {
-//		//用户的视角 user -----> organizaition
-//		//         organization ------> user
-//		//         organization ------
-//		tran := record.Record
-//		if tran.IDNo == asset.TradingEntityID {
-//			asset.AssetIncome += tran.Amount * tran.Portion
-//
-//		} else if  tran.Toid == asset.TradingEntityID {
-//			asset.AssetOutcome += tran.Amount * tran.Portion
-//		}
-//		if (asset.AssetIncome - asset.AssetOutcome) < 0 {
-//			fmt.Println("negative")
-//		}
-//		asset.TradeStartTime = findMin(asset.TradeStartTime, tran.TransDate)
-//		asset.TradeEndTime =   findMax(asset.TradeEndTime, tran.TransDate)
-//		asset.TransactionNum += 1
-//		//机构
-//
-//		_, ok := asset.OrganizatonMap[tran.OrganizationCode]
-//		if !ok {
-//			asset.OrganizatonMap[tran.OrganizationCode] = &OrganizationAsset{ID: tran.OrganizationCode}
-//		}
-//		//像这种情况orgAsset如果不存在，对其操作后，orgAsset是否立即存在
-//		//asset.OrganizatonMap[tran.OrganizationCode].TradestartTime = findMin(asset.OrganizatonMap[tran.OrganizationCode].TradestartTime, tran.TransDate)
-//		//产品
-//		//asset.OrganizatonMap[tran.OrganizationCode].TradeendTime = findMax(asset.OrganizatonMap[tran.OrganizationCode].TradeendTime, tran.TransDate)
-//
-//		//记录机构的交易数据
-//		if statisticID == tran.IDNo {
-//
-//			asset.OrganizatonMap[tran.OrganizationCode].Outcome += tran.Amount * tran.Portion
-//		} else if statisticID == tran.Toid {
-//			asset.OrganizatonMap[tran.OrganizationCode].Income += tran.Amount * tran.Portion
-//		}
-//		asset.OrganizatonMap[tran.OrganizationCode].TransactionNum += 1
-//
-//
-//		if AlreadyCreateProductMap[tran.OrganizationCode] == false {
-//			asset.OrganizatonMap[tran.OrganizationCode].ProductMap = make(map[string]*ProductAsset)
-//			AlreadyCreateProductMap[tran.OrganizationCode] = true
-//
-//		}
-//
-//		//记录产品的数据
-//		_, ok = asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode]
-//		if !ok {
-//			asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode] = &ProductAsset{ID: tran.ProductCode}
-//		}
-//
-//		asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].Tradeendtime =   findMax(asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].Tradeendtime, tran.TransDate)
-//		asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].Tradestarttime = findMin(asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].Tradestarttime, tran.TransDate)
-//
-//
-//		if statisticID == tran.IDNo {
-//			asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].Outcome += tran.Amount * tran.Portion
-//		} else if statisticID == tran.Toid {
-//			asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].Income += tran.Amount * tran.Portion
-//
-//		}
-//		asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].TransactionNum += 1
-//
-//	}
-//	asset.AssetBalance = asset.AssetIncome - asset.AssetOutcome
-//	return asset
-//
-//}
+
+type RecordTransaction struct {
+	Key    string      `json:"Key"`
+	Record Transaction `json:"Record"`
+}
+
+func ComputeIDNoAsset(idNo string, transactionBytes []byte) IDNoAsset {
+	var idNoAsset IDNoAsset
+	var recordTransaction []RecordTransaction
+	idNoAsset.IDNo = idNo
+	fmt.Println(string(transactionBytes))
+	err := json.Unmarshal(transactionBytes, &recordTransaction)
+	if err != nil {
+		fmt.Println("it is wrong")
+		fmt.Println(err.Error())
+	}
+
+	idNoAsset.QueryTime = fmt.Sprintf("%v", time.Now().Format("20060102150405"))
+	idNoAsset.OrganizatonMap = make(map[string]*OrganizationAsset)
+	AlreadyCreateProductMap := make(map[string]bool)
+
+	for _, record := range recordTransaction {
+		//用户的视角 user -----> organizaition
+		//         organization ------> user
+		//         organization ------
+		tran := record.Record
+		amount, _ := strconv.ParseFloat(tran.Amount, 64)
+
+
+		idNoAsset.StartTime = findMin(idNoAsset.StartTime, tran.TransDate)
+		idNoAsset.EndTime = findMax(idNoAsset.EndTime, tran.TransDate)
+
+		idNoAsset.TranNum += 1
+		//机构
+
+		_, ok := idNoAsset.OrganizatonMap[tran.OrganizationCode]
+		if !ok {
+			idNoAsset.OrganizatonMap[tran.OrganizationCode] = &OrganizationAsset{OrganizationCode: tran.OrganizationCode}
+		}
+
+		idNoAsset.OrganizatonMap[tran.OrganizationCode].TranNum += 1
+
+		if AlreadyCreateProductMap[tran.OrganizationCode] == false {
+			idNoAsset.OrganizatonMap[tran.OrganizationCode].ProductAssetMap= make(map[string]*ProductAsset)
+			AlreadyCreateProductMap[tran.OrganizationCode] = true
+
+		}
+
+		//像这种情况orgAsset如果不存在，对其操作后，orgAsset是否立即存在
+		idNoAsset.OrganizatonMap[tran.OrganizationCode].StartTime = findMin(idNoAsset.OrganizatonMap[tran.OrganizationCode].StartTime, tran.TransDate)
+		//产品
+		idNoAsset.OrganizatonMap[tran.OrganizationCode].EndTime = findMax(idNoAsset.OrganizatonMap[tran.OrganizationCode].EndTime, tran.TransDate)
+
+
+		//记录产品的数据
+		_, ok = idNoAsset.OrganizatonMap[tran.OrganizationCode].ProductAssetMap[tran.ProductCode]
+		if !ok {
+			idNoAsset.OrganizatonMap[tran.OrganizationCode].ProductAssetMap[tran.ProductCode] = &ProductAsset{ProductCode: tran.ProductCode}
+		}
+
+		idNoAsset.OrganizatonMap[tran.OrganizationCode].ProductAssetMap[tran.ProductCode].StartTime = findMax(idNoAsset.OrganizatonMap[tran.OrganizationCode].ProductAssetMap[tran.ProductCode].StartTime, tran.TransDate)
+		idNoAsset.OrganizatonMap[tran.OrganizationCode].ProductAssetMap[tran.ProductCode].EndTime = findMin(idNoAsset.OrganizatonMap[tran.OrganizationCode].ProductAssetMap[tran.ProductCode].EndTime, tran.TransDate)
+
+
+
+		idNoAsset.OrganizatonMap[tran.OrganizationCode].ProductAssetMap[tran.ProductCode].TranNum += 1
+
+		//记录机构的交易数据
+		if tran.LoanType == "debit" {
+			idNoAsset.Debit += amount
+			idNoAsset.OrganizatonMap[tran.OrganizationCode].Debit += amount
+			idNoAsset.OrganizatonMap[tran.OrganizationCode].ProductAssetMap[tran.ProductCode].Debit += amount
+
+		} else if tran.LoanType == "credit" {
+			idNoAsset.Credit += amount
+			idNoAsset.OrganizatonMap[tran.OrganizationCode].Credit += amount
+			idNoAsset.OrganizatonMap[tran.OrganizationCode].ProductAssetMap[tran.ProductCode].Credit += amount
+
+		}
+
+
+	}
+	idNoAsset.Balance = idNoAsset.Credit - idNoAsset.Debit
+	return idNoAsset
+
+}
 //func computeProductSaleInformation(transactionBytes []byte) ProductAsset {
 //	var productAsset ProductAsset
 //	var recordTransaction []RecordTransaction
@@ -152,7 +189,7 @@ package main
 //		tran := record.Record
 //		productAsset.Balance += tran.Amount * tran.Portion
 //		productAsset.ID = tran.ProductCode
-//		productAsset.Tradestarttime = findMin(productAsset.Tradestarttime, tran.TransDate)
+//		productAsset.startTime = findMin(productAsset.startTime, tran.TransDate)
 //		productAsset.Tradeendtime = findMax(productAsset.Tradeendtime, tran.TransDate)
 //	}
 //	return productAsset
@@ -305,17 +342,35 @@ package main
 //	return organizationAsset
 //}
 //
-//func findMax(num1 int64, num2 int64) int64 {
-//	if num1 > num2 {
-//		return num1
-//	} else {
-//		return num2
-//	}
-//}
-//func findMin(num1 int64, num2 int64) int64 {
-//	if num1 < num2 && num1 != 0 {
-//		return num1
-//	} else {
-//		return num2
-//	}
-//}
+func findMax(t1 string, t2 string) string {
+	if t1 == "" {
+		return t2
+	}
+	layout := "20060102150405"
+
+	T1, _:= time.Parse(layout, t1)
+
+	T2, _:= time.Parse(layout, t2)
+
+
+	if T1.Before(T2) {
+		return t2
+	} else {
+		return t1
+	}
+}
+func findMin(t1 string, t2 string) string {
+	if t1 == "" {
+		return t2
+	}
+	layout := "20060102150405"
+	T1, _:= time.Parse(layout, t1)
+	T2, _:= time.Parse(layout, t2)
+
+
+	if T1.After(T2) {
+		return t2
+	} else {
+		return t1
+	}
+}

@@ -81,9 +81,9 @@ func checkInvokeUser(t *testing.T, stub *shim.MockStub, args [][]byte, checkargs
 		} else {
 			t.FailNow()
 		}
-	case "getUserAsset" == string(args[1]):
-		fmt.Println("start test getUserAsset")
-		fmt.Println("UserAsset", string(res.GetPayload()))
+	case "getIDNoAsset" == string(args[1]):
+		fmt.Println("start test getIDNoAsset")
+		fmt.Println("getIDNoAsset", string(res.GetPayload()))
 
 	case "getUserOrgProductCode" == string(args[1]):
 		fmt.Println("start test getUserOrgProductCode")
@@ -132,6 +132,15 @@ func checkInvokeTransaction(t *testing.T, stub *shim.MockStub, args [][]byte, ch
 	case "getOrganizationProduct" == string(args[1]):
 		fmt.Println("start test getOrganizationProduct")
 		fmt.Println("getOrganizationProduct", string(res.GetPayload()))
+
+
+	case "getTransactionByIDNo" == string(args[1]):
+		fmt.Println("start test getTransactionByIDNo")
+		fmt.Println("getTransactionByIDNo", string(res.GetPayload()))
+
+	case "queryTransactionByIDNo" == string(args[1]):
+		fmt.Println("start test queryTransactionByIDNo")
+		fmt.Println("queryTransactionByIDNo", string(res.GetPayload()))
 	}
 }
 
@@ -278,8 +287,8 @@ func TestUser (t *testing.T) {
 	getALLToHyperledger(t, stub)
 
 
-	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByIDNo"),[]byte("03")} , string("w43"))
-	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAsset"), []byte("00000000000022")}, string("1"))
+	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByIDNo"),[]byte("03")} , string("w43"))
+	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getIDNoAsset"), []byte("03")}, string("1"))
 	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAllProduct"), []byte("IDNo0")}, string(""))
 	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserOrgProductCode"),  []byte("pingan"), []byte("IDNo0")}, string(""))
 	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserFromOrganizationAsset"),  []byte("pingan"),  []byte("IDNo0")}, string(""))
@@ -301,7 +310,9 @@ func TestTransaction (t *testing.T) {
 	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByOrderNoRange"),
 																[]byte("201710281640495473214732942839073347079911"),
 																[]byte("201710281640575473214732942839073347079911")}, string("1"))
+	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByIDNo"),[]byte("03")}, string("1"))
 
+	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("queryTransactionByIDNo"),[]byte("03")}, string("1"))
 
 }
 
@@ -338,7 +349,7 @@ func TestOrganization (t *testing.T) {
 
 
 func TestGenerateDate(t *testing.T) {
-	generate_transdata(9)
+	generate_transdata(300)
 
 }
 

@@ -25,3 +25,25 @@
   "account": "4995054100726587",
   "desc": ""
 }
+{
+  "queryDate":"20171027141154",
+  "idNo":"023",
+  "tranNum":"23",
+  "startTime":"234",
+  "endTime":"3547",
+  "credit":"fsad",
+  "debit":"fas",
+  "balance":"234",
+}
+
+{
+  "productCode":"23",
+  "queryTime":"234",
+  "tranNum":"23",
+  "startTime":"234",
+  "endTime":"3547",
+  "credit":"fsad",
+  "debit":"fas",
+  "balance":"234",
+
+}
