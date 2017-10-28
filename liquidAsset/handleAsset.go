@@ -75,62 +75,62 @@ func computeAssetByUserID(statisticID string, transactionBytes []byte) UserAsset
 		//         organization ------> user
 		//         organization ------
 		tran := record.Record
-		if tran.Fromid == asset.TradingEntityID {
-			asset.AssetIncome += tran.Amount * tran.Price
+		if tran.IDNo == asset.TradingEntityID {
+			asset.AssetIncome += tran.Amount * tran.Portion
 
 		} else if  tran.Toid == asset.TradingEntityID {
-			asset.AssetOutcome += tran.Amount * tran.Price
+			asset.AssetOutcome += tran.Amount * tran.Portion
 		}
 		if (asset.AssetIncome - asset.AssetOutcome) < 0 {
 			fmt.Println("negative")
 		}
-		asset.TradeStartTime = findMin(asset.TradeStartTime, tran.Transactiondate)
-		asset.TradeEndTime =   findMax(asset.TradeEndTime, tran.Transactiondate)
+		asset.TradeStartTime = findMin(asset.TradeStartTime, tran.TransDate)
+		asset.TradeEndTime =   findMax(asset.TradeEndTime, tran.TransDate)
 		asset.TransactionNum += 1
 		//机构
 
-		_, ok := asset.OrganizatonMap[tran.Organizationid]
+		_, ok := asset.OrganizatonMap[tran.OrganizationCode]
 		if !ok {
-			asset.OrganizatonMap[tran.Organizationid] = &OrganizationAsset{ID: tran.Organizationid}
+			asset.OrganizatonMap[tran.OrganizationCode] = &OrganizationAsset{ID: tran.OrganizationCode}
 		}
 		//像这种情况orgAsset如果不存在，对其操作后，orgAsset是否立即存在
-		//asset.OrganizatonMap[tran.Organizationid].TradestartTime = findMin(asset.OrganizatonMap[tran.Organizationid].TradestartTime, tran.Transactiondate)
+		//asset.OrganizatonMap[tran.OrganizationCode].TradestartTime = findMin(asset.OrganizatonMap[tran.OrganizationCode].TradestartTime, tran.TransDate)
 		//产品
-		//asset.OrganizatonMap[tran.Organizationid].TradeendTime = findMax(asset.OrganizatonMap[tran.Organizationid].TradeendTime, tran.Transactiondate)
+		//asset.OrganizatonMap[tran.OrganizationCode].TradeendTime = findMax(asset.OrganizatonMap[tran.OrganizationCode].TradeendTime, tran.TransDate)
 
 		//记录机构的交易数据
-		if statisticID == tran.Fromid {
+		if statisticID == tran.IDNo {
 
-			asset.OrganizatonMap[tran.Organizationid].Outcome += tran.Amount * tran.Price
+			asset.OrganizatonMap[tran.OrganizationCode].Outcome += tran.Amount * tran.Portion
 		} else if statisticID == tran.Toid {
-			asset.OrganizatonMap[tran.Organizationid].Income += tran.Amount * tran.Price
+			asset.OrganizatonMap[tran.OrganizationCode].Income += tran.Amount * tran.Portion
 		}
-		asset.OrganizatonMap[tran.Organizationid].TransactionNum += 1
+		asset.OrganizatonMap[tran.OrganizationCode].TransactionNum += 1
 
 
-		if AlreadyCreateProductMap[tran.Organizationid] == false {
-			asset.OrganizatonMap[tran.Organizationid].ProductMap = make(map[string]*ProductAsset)
-			AlreadyCreateProductMap[tran.Organizationid] = true
+		if AlreadyCreateProductMap[tran.OrganizationCode] == false {
+			asset.OrganizatonMap[tran.OrganizationCode].ProductMap = make(map[string]*ProductAsset)
+			AlreadyCreateProductMap[tran.OrganizationCode] = true
 
 		}
 
 		//记录产品的数据
-		_, ok = asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid]
+		_, ok = asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode]
 		if !ok {
-			asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid] = &ProductAsset{ID: tran.Productid}
+			asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode] = &ProductAsset{ID: tran.ProductCode}
 		}
 
-		asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].Tradeendtime =   findMax(asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].Tradeendtime, tran.Transactiondate)
-		asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].Tradestarttime = findMin(asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].Tradestarttime, tran.Transactiondate)
+		asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].Tradeendtime =   findMax(asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].Tradeendtime, tran.TransDate)
+		asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].Tradestarttime = findMin(asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].Tradestarttime, tran.TransDate)
 
 
-		if statisticID == tran.Fromid {
-			asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].Outcome += tran.Amount * tran.Price
+		if statisticID == tran.IDNo {
+			asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].Outcome += tran.Amount * tran.Portion
 		} else if statisticID == tran.Toid {
-			asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].Income += tran.Amount * tran.Price
+			asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].Income += tran.Amount * tran.Portion
 
 		}
-		asset.OrganizatonMap[tran.Organizationid].ProductMap[tran.Productid].TransactionNum += 1
+		asset.OrganizatonMap[tran.OrganizationCode].ProductMap[tran.ProductCode].TransactionNum += 1
 
 	}
 	asset.AssetBalance = asset.AssetIncome - asset.AssetOutcome
@@ -150,10 +150,10 @@ func computeProductSaleInformation(transactionBytes []byte) ProductAsset {
 	for _, record := range recordTransaction {
 		productAsset.TransactionNum += 1
 		tran := record.Record
-		productAsset.Balance += tran.Amount * tran.Price
-		productAsset.ID = tran.Productid
-		productAsset.Tradestarttime = findMin(productAsset.Tradestarttime, tran.Transactiondate)
-		productAsset.Tradeendtime = findMax(productAsset.Tradeendtime, tran.Transactiondate)
+		productAsset.Balance += tran.Amount * tran.Portion
+		productAsset.ID = tran.ProductCode
+		productAsset.Tradestarttime = findMin(productAsset.Tradestarttime, tran.TransDate)
+		productAsset.Tradeendtime = findMax(productAsset.Tradeendtime, tran.TransDate)
 	}
 	return productAsset
 
@@ -175,13 +175,13 @@ func computeProductAllUser(transactionBytes []byte) ProductAsset {
 		_, ok := productAsset.UserMap[tran.Toid]
 		if ok == false {
 			productAsset.UserMap[tran.Toid] = &UserAsset{TradingEntityID: tran.Toid}
-			productAsset.ID = tran.Productid
+			productAsset.ID = tran.ProductCode
 			productAsset.StatisticDate = fmt.Sprintf("%v", time.Now().Unix())
 
 		}
 		productAsset.TransactionNum += 1
-		productAsset.Balance += tran.Amount * tran.Price
-		productAsset.UserMap[tran.Toid].AssetBalance += tran.Amount * tran.Price
+		productAsset.Balance += tran.Amount * tran.Portion
+		productAsset.UserMap[tran.Toid].AssetBalance += tran.Amount * tran.Portion
 		productAsset.UserMap[tran.Toid].TransactionNum += 1
 	}
 
@@ -203,34 +203,34 @@ func computeOrgnazitionAllProduct(transactionBytes []byte) OrganizationAsset {
 	for _, record := range recordTransaction {
 		tran := record.Record
 
-		_, ok := organizationAsset.ProductMap[tran.Productid]
+		_, ok := organizationAsset.ProductMap[tran.ProductCode]
 		if !ok {
-			organizationAsset.ProductMap[tran.Productid] = &ProductAsset{ID: tran.Productid}
-			organizationAsset.ID = tran.Organizationid
+			organizationAsset.ProductMap[tran.ProductCode] = &ProductAsset{ID: tran.ProductCode}
+			organizationAsset.ID = tran.OrganizationCode
 		}
 		organizationAsset.TransactionNum += 1
-		organizationAsset.Balance += tran.Amount * tran.Price
+		organizationAsset.Balance += tran.Amount * tran.Portion
 
-		organizationAsset.ProductMap[tran.Productid].TransactionNum += 1
-		organizationAsset.ProductMap[tran.Productid].Balance += tran.Amount * tran.Price
+		organizationAsset.ProductMap[tran.ProductCode].TransactionNum += 1
+		organizationAsset.ProductMap[tran.ProductCode].Balance += tran.Amount * tran.Portion
 
 		if AlreadyCreateUser == false {
-			//organizationAsset.ProductMap[tran.Organizationid].UserMap = make(map[string]*UserAsset)
+			//organizationAsset.ProductMap[tran.OrganizationCode].UserMap = make(map[string]*UserAsset)
 		}
 		AlreadyCreateUser = true
-		//_, ok = organizationAsset.ProductMap[tran.Organizationid].UserMap[tran.Toid]
+		//_, ok = organizationAsset.ProductMap[tran.OrganizationCode].UserMap[tran.Toid]
 		//if !ok {
-		//	organizationAsset.ProductMap[tran.Organizationid].UserMap[tran.Toid] = &UserAsset{TradingEntityID:tran.Toid}
+		//	organizationAsset.ProductMap[tran.OrganizationCode].UserMap[tran.Toid] = &UserAsset{TradingEntityID:tran.Toid}
 		//}
 		//
-		//_, ok = organizationAsset.ProductMap[tran.Organizationid].UserMap[tran.Fromid]
+		//_, ok = organizationAsset.ProductMap[tran.OrganizationCode].UserMap[tran.IDNo]
 		//if !ok {
-		//	organizationAsset.ProductMap[tran.Organizationid].UserMap[tran.Fromid] = &UserAsset{TradingEntityID:tran.Fromid}
+		//	organizationAsset.ProductMap[tran.OrganizationCode].UserMap[tran.IDNo] = &UserAsset{TradingEntityID:tran.IDNo}
 		//}
 		//
-		//organizationAsset.ProductMap[tran.Productid].UserMap[tran.Toid].AssetIncome += tran.Amount * tran.Price
+		//organizationAsset.ProductMap[tran.ProductCode].UserMap[tran.Toid].AssetIncome += tran.Amount * tran.Portion
 		//
-		//organizationAsset.ProductMap[tran.Productid].UserMap[tran.Fromid].AssetOutcome += tran.Amount * tran.Price
+		//organizationAsset.ProductMap[tran.ProductCode].UserMap[tran.IDNo].AssetOutcome += tran.Amount * tran.Portion
 		//
 
 	}
@@ -260,39 +260,39 @@ func computeOrgnazitionAllUser(transactionBytes []byte) OrganizationAsset {
 		_, ok := organizationAsset.UserMap[tran.Toid]
 		if !ok {
 			organizationAsset.UserMap[tran.Toid] = &UserAsset{TradingEntityID: tran.Toid}
-			organizationAsset.ID = tran.Organizationid
+			organizationAsset.ID = tran.OrganizationCode
 		}
-		_, ok = organizationAsset.UserMap[tran.Fromid]
+		_, ok = organizationAsset.UserMap[tran.IDNo]
 		if !ok {
-			organizationAsset.UserMap[tran.Fromid] = &UserAsset{TradingEntityID: tran.Fromid}
+			organizationAsset.UserMap[tran.IDNo] = &UserAsset{TradingEntityID: tran.IDNo}
 		}
 
 		organizationAsset.TransactionNum += 1
-		organizationAsset.Balance += tran.Amount * tran.Price
+		organizationAsset.Balance += tran.Amount * tran.Portion
 
 		organizationAsset.UserMap[tran.Toid].TransactionNum += 1
-		organizationAsset.UserMap[tran.Toid].AssetIncome += tran.Amount * tran.Price
+		organizationAsset.UserMap[tran.Toid].AssetIncome += tran.Amount * tran.Portion
 
-		organizationAsset.UserMap[tran.Fromid].TransactionNum += 1
-		organizationAsset.UserMap[tran.Fromid].AssetOutcome += tran.Amount * tran.Price
+		organizationAsset.UserMap[tran.IDNo].TransactionNum += 1
+		organizationAsset.UserMap[tran.IDNo].AssetOutcome += tran.Amount * tran.Portion
 
 		if AlreadyCreateUser == false {
-			//organizationAsset.ProductMap[tran.Organizationid].UserMap = make(map[string]*UserAsset)
+			//organizationAsset.ProductMap[tran.OrganizationCode].UserMap = make(map[string]*UserAsset)
 		}
 		AlreadyCreateUser = true
-		//_, ok = organizationAsset.ProductMap[tran.Organizationid].UserMap[tran.Toid]
+		//_, ok = organizationAsset.ProductMap[tran.OrganizationCode].UserMap[tran.Toid]
 		//if !ok {
-		//	organizationAsset.ProductMap[tran.Organizationid].UserMap[tran.Toid] = &UserAsset{TradingEntityID:tran.Toid}
+		//	organizationAsset.ProductMap[tran.OrganizationCode].UserMap[tran.Toid] = &UserAsset{TradingEntityID:tran.Toid}
 		//}
 		//
-		//_, ok = organizationAsset.ProductMap[tran.Organizationid].UserMap[tran.Fromid]
+		//_, ok = organizationAsset.ProductMap[tran.OrganizationCode].UserMap[tran.IDNo]
 		//if !ok {
-		//	organizationAsset.ProductMap[tran.Organizationid].UserMap[tran.Fromid] = &UserAsset{TradingEntityID:tran.Fromid}
+		//	organizationAsset.ProductMap[tran.OrganizationCode].UserMap[tran.IDNo] = &UserAsset{TradingEntityID:tran.IDNo}
 		//}
 		//
-		//organizationAsset.ProductMap[tran.Productid].UserMap[tran.Toid].AssetIncome += tran.Amount * tran.Price
+		//organizationAsset.ProductMap[tran.ProductCode].UserMap[tran.Toid].AssetIncome += tran.Amount * tran.Portion
 		//
-		//organizationAsset.ProductMap[tran.Productid].UserMap[tran.Fromid].AssetOutcome += tran.Amount * tran.Price
+		//organizationAsset.ProductMap[tran.ProductCode].UserMap[tran.IDNo].AssetOutcome += tran.Amount * tran.Portion
 		//
 
 	}

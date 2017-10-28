@@ -20,7 +20,7 @@ WriteOrganization
 getTransactionByUserID #根据UserID获取某个用户下的所有交易
 getUserAsset #获取某一用户的资产详情
 getUserAllProduct #得到该用户购买的所有产品
-getUserOrgProductid #获取某个机构下产品的所有购买情况
+getUserOrgProductCode #获取某个机构下产品的所有购买情况
 getUserFromOrganizationAsset #获取用户在某个机构下资产详情
 
 getProductTransactionByProductID #根据产品获取该产品的所有账本条目
@@ -28,14 +28,14 @@ getProductAsset #得到产品的资产信息
 getProductAllUser #得到产品下所有的用户购买详情 
 getProductOneUser #得到产品下某个用户购买详情 
 
-getTransactionByOrganizationid #得到机构的所有交易条目 
+getTransactionByOrganizationCode #得到机构的所有交易条目 
 getOrganizationProduct #得到机构下的所有产品 
 getOrganizationAsset #得到机构下所有的资产,与上一函数类似 
 getOrganizationUser #得到机构下所有下用户的购买信息 
 
 Transaction # 入账 
 getTransactionByID #根据交易ID获取交易数据
-getTransactionByTransactionidRange #获取在某个交易ID范围内的数据
+getTransactionByOrderNoRange #获取在某个交易ID范围内的数据
 
 
 ```
@@ -65,12 +65,12 @@ Amount: 卡上剩余金额
 ```
 //产品
 type Product struct {
-	Productid      string  `json:"productid"`
+	ProductCode      string  `json:"productid"`
 	Productname    string  `json:"productname"`
 	Producttype    int     `json:"producttype"`
-	Organizationid string  `json:"organizationid"`
+	OrganizationCode string  `json:"organizationid"`
 	Amount         float64 `json:"amount"`
-	Price          float64 `json:"price"`
+	Portion          float64 `json:"price"`
 }
 ```
 ###机构类
@@ -95,23 +95,23 @@ type Transaction struct {
 	NextRequestSerial string `json:"NextRequestSerial"`
 	Proposaltime      int64   `json:"Proposaltime"`
 	//交易ID,区块链中的索引
-	Transactionid     string `json:"transactionid"`
-	Transactiondate   int64    `json:"transactiondate"`
+	OrderNo     string `json:"transactionid"`
+	TransDate   int64    `json:"transactiondate"`
 	Parentorder       string `json:"parentorder"`
 	Suborder          string `json:"suborder"`
 	Payid             string `json:"payid"`
 	//交易双方
 	Transtype         string `json:"transtype"`
 	Fromtype          int    `json:"fromtype"`
-	Fromid            string `json:"fromid"`
+	IDNo            string `json:"fromid"`
 	Totype            int    `json:"totype"`
 	Toid              string `json:"toid"`
 	//实际内容
-	Productid         string `json:"productid"`
+	ProductCode         string `json:"productid"`
 	Productinfo       string `json:"productinfo"`
-	Organizationid    string `json:"organizationid"`
+	OrganizationCode    string `json:"organizationid"`
 	Amount            float64    `json:"amount"`
-	Price             float64    `json:"price"`
+	Portion             float64    `json:"price"`
 }
 ```
 
@@ -121,7 +121,7 @@ CreateUser #创建用户
 request 参数: 
 args[0]:
 {
-    "id": "userid8",
+    "id": "IDNo8",
     "Name": "JBYNCsmE",
     "identificationtype": 1,
     "identification": "23342",
@@ -141,7 +141,7 @@ request 参数:
 args[0] : "user.ID"
 response:
  {
-        "id": "userid6",
+        "id": "IDNo6",
         "Name": "JBYNCsmE",
         "identificationtype": 1,
         "identification": "23342",
@@ -174,7 +174,7 @@ response 参数:
 ```
 getProduct #得到产品
 request: 
-args[0] : product.Productid
+args[0] : product.ProductCode
 response:
     {
         "productid": "productid0",
@@ -216,7 +216,7 @@ response 参数:
 ```
 getTransactionByUserID #根据UserID获取某个用户下的所有交易
 request
-args[0]："userid" 
+args[0]："IDNo" 
 response ： 
 [
   {
@@ -260,7 +260,7 @@ response ：
 ```
 getUserAsset #获取某一用户的资产详情
 request 参数： len(args) =1 
-args[0]: "userid"
+args[0]: "IDNo"
 response:
 {
     "statistic_date": "1505896172",
@@ -321,7 +321,7 @@ response:
 ```
 getUserAllProduct #得到该用户购买的所有产品
 request
-args[0]:"userid"
+args[0]:"IDNo"
 response:
    [
      {
@@ -354,10 +354,10 @@ response:
 
 ```
 ```
-getUserOrgProductid #获取某个机构下产品的所有购买情况
+getUserOrgProductCode #获取某个机构下产品的所有购买情况
 request
 args[0]: "organizationid"
-args[1]:"userid"
+args[1]:"IDNo"
 
 response
   [
@@ -392,7 +392,7 @@ getUserFromOrganizationAsset #获取用户在某个机构下资产详情
  
 request 
 args[0]: "organizationid"
-args[1]: "userid"
+args[1]: "IDNo"
 
 response 参数: 
 {
@@ -444,7 +444,7 @@ response
       "payid": "0",
       "transtype": "0",
       "fromtype": 1,
-      "fromid": "userid0",
+      "fromid": "IDNo0",
       "totype": 1,
       "toid": "JBYNCsmE",
       "productid": "productid0",
@@ -470,7 +470,7 @@ response
       "payid": "6",
       "transtype": "6",
       "fromtype": 1,
-      "fromid": "userid2",
+      "fromid": "IDNo2",
       "totype": 1,
       "toid": "12324",
       "productid": "productid0",
@@ -553,7 +553,7 @@ response 参数:
 ```
 getProductOneUser #得到产品下某个用户购买详情 
 request 参数:
-args[1] : "userid0"
+args[1] : "IDNo0"
 args[0] : "productid0"
 response 参数: 
  {
@@ -572,7 +572,7 @@ response 参数:
 }
 ```
 ```
-getTransactionByOrganizationid #得到机构的所有交易条目 
+getTransactionByOrganizationCode #得到机构的所有交易条目 
 request 参数: 
 args[0]: "organizationid"
 response 参数: 
@@ -593,7 +593,7 @@ response 参数:
       "payid": "0",
       "transtype": "0",
       "fromtype": 1,
-      "fromid": "userid0",
+      "fromid": "IDNo0",
       "totype": 1,
       "toid": "JBYNCsmE",
       "productid": "productid0",
@@ -710,7 +710,7 @@ response 参数:
   "income": 0,
   "productmap": null,
   "asset": {
-    "userid0": {
+    "IDNo0": {
       "statistic_date": "",
       "trading_entity_id": "1234",
       "transaction_num": 1,
@@ -724,9 +724,9 @@ response 参数:
       "organization_Map": null,
       "productmap": null
     },
-    "userid1": {
+    "IDNo1": {
       "statistic_date": "",
-      "trading_entity_id": "userid0",
+      "trading_entity_id": "IDNo0",
       "transaction_num": 3,
       "asset_type": "",
       "asset_info": "",
@@ -763,7 +763,7 @@ args[0]:
     "payid": "7",
     "transtype": "7",
     "fromtype": 1,
-    "fromid": "userid2",
+    "fromid": "IDNo2",
     "totype": 1,
     "toid": "1234",
     "productid": "productid0",
@@ -801,7 +801,7 @@ response 参数：
   }
 ```
 ```
-getTransactionByTransactionidRange #根据交易ID获取数据
+getTransactionByOrderNoRange #根据交易ID获取数据
 request
 args[0]: "transactionid0"
 args[1]: "transactionid1"
@@ -824,7 +824,7 @@ response 参数：
         "payid": "0",
         "transtype": "0",
         "fromtype": 1,
-        "fromid": "userid0",
+        "fromid": "IDNo0",
         "totype": 1,
         "toid": "JBYNCsmE",
         "productid": "productid0",

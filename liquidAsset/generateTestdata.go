@@ -16,6 +16,7 @@ func generate_transdata(number int) {
 	buffer.WriteString("[")
 	AlreadyWrite := false
 
+
 	for i := 0; i < number; i++ {
 		if AlreadyWrite == true {
 			buffer.WriteString(",")
@@ -27,24 +28,23 @@ func generate_transdata(number int) {
 		data :=  time.Now().Format("20060102150405")
 		transaction.SID  =  data + idx
 		transaction.ReceiverSID = data +idx
-		transaction.OriginSID  = data +idx
+		transaction.TransDate  = data +idx
 		transaction.RequestSerial = data + idx
 		transaction.NextRequestSerial = data + idx
-		transaction.Proposaltime =  time.Now().Unix()
 
-		transaction.Transactionid = "transactionid" + data + idx
-		transaction.Transactiondate = time.Now().Unix()
+		transaction.OrderNo = "transactionid" + data + idx
+		transaction.TransDate = time.Now().Unix()
 		transaction.Parentorder = idx
 		transaction.Suborder = idx
 		transaction.Payid = idx
 		transaction.Transtype = idx
 		transaction.Fromtype = 1
-		transaction.Fromid = "0000000000002" + strconv.Itoa(i/3)
+		transaction.IDNo = "0000000000002" + strconv.Itoa(i/3)
 		transaction.Totype = 1
 		transaction.Toid = "0000000000003" + strconv.Itoa(i/3)
-		transaction.Productid = "productid" + strconv.Itoa(i%3)
+		transaction.ProductCode = "productid" + strconv.Itoa(i%3)
 		transaction.Productinfo = "trohs si efil"
-		transaction.Organizationid = "nagnip"
+		transaction.OrganizationCode = "nagnip"
 		random, err := strconv.Atoi(RandInt(2))
 		if err != nil {
 			fmt.Println(err.Error())
@@ -55,7 +55,7 @@ func generate_transdata(number int) {
 		if err != nil {
 			fmt.Println(err.Error())
 		}
-		transaction.Price =  float64(random)
+		transaction.Portion =  float64(random)
 		transactionBytes, _ := json.Marshal(transaction)
 		buffer.WriteString(string(transactionBytes))
 		AlreadyWrite = true
@@ -112,12 +112,12 @@ func generate_productData(number int) {
 		var idx string
 		idx = strconv.Itoa(i)
 
-		product.Productid = "productid" + idx
+		product.ProductCode = "productid" + idx
 		product.Productname = "zhaocaibao"
-		product.Organizationid = "pingan"
+		product.OrganizationCode = "pingan"
 		product.Producttype = 1
 		product.Amount = 3
-		product.Price = 33.0
+		product.Portion = 33.0
 
 		productBytes, _ := json.Marshal(product)
 		buffer.WriteString(string(productBytes))

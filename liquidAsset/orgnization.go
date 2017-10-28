@@ -83,7 +83,7 @@ func (t *SimpleChaincode) WriteOrganization(stub shim.ChaincodeStubInterface, ar
 	return shim.Success(nil)
 }
 
-func (t *SimpleChaincode) getTransactionByOrganizationid(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *SimpleChaincode) getTransactionByOrganizationCode(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("0x07 getProductTransactionByProductID")
 
 	if len(args) != 2 {
@@ -91,19 +91,19 @@ func (t *SimpleChaincode) getTransactionByOrganizationid(stub shim.ChaincodeStub
 	}
 	organizationid := args[1:]
 
-	// This will execute a key range query on all keys starting with 'Productid
-	transactionOrganizationidResultIterator, err := stub.GetStateByPartialCompositeKey("Organizationid~Transactionid", organizationid)
+	// This will execute a key range query on all keys starting with 'ProductCode
+	transactionOrganizationCodeResultIterator, err := stub.GetStateByPartialCompositeKey("OrganizationCode~OrderNo", organizationid)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-	defer transactionOrganizationidResultIterator.Close()
+	defer transactionOrganizationCodeResultIterator.Close()
 
 	bArrayMemberAlreadyWritten := false
 	var buffer bytes.Buffer
 	buffer.WriteString("[")
-	for transactionOrganizationidResultIterator.HasNext() {
+	for transactionOrganizationCodeResultIterator.HasNext() {
 		// Note that we don't get the value (2nd return variable), we'll just get the marble name from the composite key
-		queryResponse, err := transactionOrganizationidResultIterator.Next()
+		queryResponse, err := transactionOrganizationCodeResultIterator.Next()
 		if err != nil {
 			return shim.Error(err.Error())
 		}
@@ -115,7 +115,7 @@ func (t *SimpleChaincode) getTransactionByOrganizationid(stub shim.ChaincodeStub
 		if err != nil {
 			return shim.Error("we cannot splitcompositekey")
 		}
-		if objectType != "Organizationid~Transactionid" {
+		if objectType != "OrganizationCode~OrderNo" {
 			return shim.Error("object is not we want " + organizationid[0])
 		}
 		transactionid := compositeKeyParts[len(compositeKeyParts)-1]
@@ -145,7 +145,7 @@ func (t *SimpleChaincode) getOrganizationProduct(stub shim.ChaincodeStubInterfac
 	if len(args) != 2 {
 		return shim.Error("Expecting 2, but get wrong")
 	}
-	resp := t.getTransactionByOrganizationid(stub, args)
+	resp := t.getTransactionByOrganizationCode(stub, args)
 	if resp.Status != shim.OK {
 		return shim.Error("getUserAssetFailed")
 	}
@@ -166,7 +166,7 @@ func (t *SimpleChaincode) getOrganizationAsset(stub shim.ChaincodeStubInterface,
 	if len(args) != 2 {
 		return shim.Error("Expecting 2, but get wrong")
 	}
-	resp := t.getTransactionByOrganizationid(stub, args)
+	resp := t.getTransactionByOrganizationCode(stub, args)
 	if resp.Status != shim.OK {
 		return shim.Error("getUserAssetFailed")
 	}
@@ -184,7 +184,7 @@ func (t *SimpleChaincode) getOrganizationUser(stub shim.ChaincodeStubInterface, 
 	if len(args) != 2 {
 		return shim.Error("Expecting 2, but get wrong")
 	}
-	resp := t.getTransactionByOrganizationid(stub, args)
+	resp := t.getTransactionByOrganizationCode(stub, args)
 	if resp.Status != shim.OK {
 		return shim.Error("getUserAssetFailed")
 	}

@@ -20,6 +20,7 @@ import (
 	"testing"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"encoding/json"
+	"../liquidAsset/*"
 )
 
 
@@ -85,9 +86,9 @@ func checkInvokeUser(t *testing.T, stub *shim.MockStub, args [][]byte, checkargs
 		fmt.Println("start test getUserAsset")
 		fmt.Println("UserAsset", string(res.GetPayload()))
 
-	case "getUserOrgProductid" == string(args[1]):
-		fmt.Println("start test getUserOrgProductid")
-		fmt.Println("getUserOrgProductid", string(res.GetPayload()))
+	case "getUserOrgProductCode" == string(args[1]):
+		fmt.Println("start test getUserOrgProductCode")
+		fmt.Println("getUserOrgProductCode", string(res.GetPayload()))
 
 	case "getUserAllProduct" == string(args[1]):
 		fmt.Println("start test getUserAllProduct")
@@ -121,14 +122,14 @@ func checkInvokeTransaction(t *testing.T, stub *shim.MockStub, args [][]byte, ch
 			fmt.Println("getTransactionByID success")
 		}
 
-	case "getTransactionByTransactionidRange" == string(args[1]):
-		fmt.Println("start test getTransactionByTransactionidRange")
-		fmt.Println("getTransactionByTransactionidRange", string(res.GetPayload()))
+	case "getTransactionByOrderNoRange" == string(args[1]):
+		fmt.Println("start test getTransactionByOrderNoRange")
+		fmt.Println("getTransactionByOrderNoRange", string(res.GetPayload()))
 
 
-	case "getTransactionByOrganizationid" == string(args[1]):
-		fmt.Println("start test getTransactionByOrganizationid")
-		fmt.Println("getTransactionByOrganizationid", string(res.GetPayload()))
+	case "getTransactionByOrganizationCode" == string(args[1]):
+		fmt.Println("start test getTransactionByOrganizationCode")
+		fmt.Println("getTransactionByOrganizationCode", string(res.GetPayload()))
 	case "getOrganizationProduct" == string(args[1]):
 		fmt.Println("start test getOrganizationProduct")
 		fmt.Println("getOrganizationProduct", string(res.GetPayload()))
@@ -191,9 +192,9 @@ func checkInvokeOrganization(t *testing.T, stub *shim.MockStub, args [][]byte, c
 		}else {
 			fmt.Println("getOrganization success")
 	}
-	case "getTransactionByOrganizationid" == string(args[1]):
-		fmt.Println("start test getTransactionByOrganizationid")
-		fmt.Println("getTransactionByOrganizationid", string(res.GetPayload()))
+	case "getTransactionByOrganizationCode" == string(args[1]):
+		fmt.Println("start test getTransactionByOrganizationCode")
+		fmt.Println("getTransactionByOrganizationCode", string(res.GetPayload()))
 
 	case "getOrganizationProduct" == string(args[1]):
 		fmt.Println("start teste getOrganizationProduct")
@@ -225,9 +226,9 @@ func getALLToHyperledger(t *testing.T, stub *shim.MockStub){
 		if err != nil {
 			t.Fail()
 		}
-		trans_map[tran.Transactionid] = tranBytes
+		trans_map[tran.OrderNo] = tranBytes
 		checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("Transaction"), tranBytes}, string(tranBytes))
-		checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByID"), []byte(tran.Transactionid)}, string(tranBytes))
+		checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByID"), []byte(tran.OrderNo)}, string(tranBytes))
 
 	}
 	for _, user := range Users  {
@@ -245,7 +246,7 @@ func getALLToHyperledger(t *testing.T, stub *shim.MockStub){
 			fmt.Println(err.Error())
 		}
 		checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("CreateProduct"), productBytes}, string(productBytes))
-		checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("getProduct"), []byte(product.Productid)}, string(productBytes))
+		checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("getProduct"), []byte(product.ProductCode)}, string(productBytes))
 
 	}
 	for _, organization := range Organizations {
@@ -280,9 +281,9 @@ func TestUser (t *testing.T) {
 
 	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByUserID"),[]byte("00000000000022")} , string("w43"))
 	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAsset"), []byte("00000000000022")}, string("1"))
-	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAllProduct"), []byte("userid0")}, string(""))
-	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserOrgProductid"),  []byte("pingan"), []byte("userid0")}, string(""))
-	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserFromOrganizationAsset"),  []byte("pingan"),  []byte("userid0")}, string(""))
+	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAllProduct"), []byte("IDNo0")}, string(""))
+	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserOrgProductCode"),  []byte("pingan"), []byte("IDNo0")}, string(""))
+	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserFromOrganizationAsset"),  []byte("pingan"),  []byte("IDNo0")}, string(""))
 
 }
 
@@ -298,7 +299,7 @@ func TestTransaction (t *testing.T) {
 
 
 
-	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByTransactionidRange"), []byte("transactionid0"),[]byte("transactionid4")}, string("1"))
+	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByOrderNoRange"), []byte("transactionid0"),[]byte("transactionid4")}, string("1"))
 
 
 }
@@ -327,7 +328,7 @@ func TestOrganization (t *testing.T) {
 	checkInit(t, stub, [][]byte{[]byte("init"), []byte(str0)})
 	getALLToHyperledger(t, stub)
 
-	checkInvokeOrganization(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByOrganizationid"), []byte("pingan")}, string("d"))
+	checkInvokeOrganization(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByOrganizationCode"), []byte("pingan")}, string("d"))
 	checkInvokeOrganization(t, stub, [][]byte{[]byte("invoke"), []byte("getOrganizationProduct"), []byte("pingan")}, string("d"))
 	checkInvokeOrganization(t, stub, [][]byte{[]byte("invoke"), []byte("getOrganizationAsset"), []byte("pingan")}, string("d"))
 	checkInvokeOrganization(t, stub, [][]byte{[]byte("invoke"), []byte("getOrganizationUser"), []byte("pingan")}, string("d"))

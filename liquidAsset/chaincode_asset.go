@@ -19,7 +19,7 @@ type SimpleChaincode struct {
 type ProductProcess struct {
 	ProcessType   int     `json:"processtype"`   //操作类型
 	ProcessAmount float64 `json:"processamount"` //操作份额
-	ProcessPrice  float64 `json:"ProcessPrice"`  //价格
+	ProcessPortion  float64 `json:"ProcessPortion"`  //价格
 }
 
 //资金
@@ -58,9 +58,9 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case args[0] == "getUserAsset":
 		fmt.Println("entering getuesrAsset")
 		return t.getUserAsset(stub, args)
-	case args[0] == "getUserOrgProductid":
-		fmt.Println("entering getUserOrgProductid")
-		return t.getUserOrgProductid(stub, args)
+	case args[0] == "getUserOrgProductCode":
+		fmt.Println("entering getUserOrgProductCode")
+		return t.getUserOrgProductCode(stub, args)
 	case args[0] == "getUserAllProduct":
 		fmt.Println("entering getUserAllProduct")
 		return t.getUserAllProduct(stub, args)
@@ -91,8 +91,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.getOrganization(stub, args)
 	case args[0] == "WriteOrganization":
 		return t.WriteOrganization(stub, args)
-	case args[0] == "getTransactionByOrganizationid":
-		return t.getTransactionByOrganizationid(stub, args)
+	case args[0] == "getTransactionByOrganizationCode":
+		return t.getTransactionByOrganizationCode(stub, args)
 	case args[0] == "getOrganizationProduct":
 		return t.getOrganizationProduct(stub, args)
 	case args[0] == "getOrganizationAsset":
@@ -103,11 +103,11 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case args[0] == "Transaction":
 		return t.Transaction(stub, args)
 	case args[0] == "getTransactionByID":
-		return t.getTransactionByID(stub, args)
+		return t.getTransactionByOrderNo(stub, args)
 	case args[0] == "getTransactionByUserID":
-		return t.getTransactionByUserID(stub, args)
-	case args[0] == "getTransactionByTransactionidRange":
-		return t.getTransactionByTransactionidRange(stub, args)
+		return t.getTransactionByIDNo(stub, args)
+	case args[0] == "getTransactionByOrderNoRange":
+		return t.getTransactionByOrderNoRange(stub, args)
 
 	case args[0] == "query":
 		return t.query(stub, args)

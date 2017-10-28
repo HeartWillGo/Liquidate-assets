@@ -11,12 +11,12 @@ import (
 
 //产品
 type Product struct {
-	Productid      string  `json:"productid"`
+	ProductCode      string  `json:"productid"`
 	Productname    string  `json:"productname"`
 	Producttype    int     `json:"producttype"`
-	Organizationid string  `json:"organizationid"`
+	OrganizationCode string  `json:"organizationid"`
 	Amount         float64 `json:"amount"`
-	Price          float64 `json:"price"`
+	Portion          float64 `json:"price"`
 }
 
 //createProduct 创建产品
@@ -36,15 +36,15 @@ func (t *SimpleChaincode) CreateProduct(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-	productByte, err := stub.GetState(product.Productid)
+	productByte, err := stub.GetState(product.ProductCode)
 	if err != nil {
 		return shim.Error("failed to get productID")
 	} else if productByte != nil {
-		return shim.Error(string(product.Productid) + "\t already exists")
+		return shim.Error(string(product.ProductCode) + "\t already exists")
 	}
 
 	// Write the state to the ledger
-	err = stub.PutState(product.Productid, productInfo)
+	err = stub.PutState(product.ProductCode, productInfo)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -90,19 +90,19 @@ func (t *SimpleChaincode) getProductTransactionByProductID(stub shim.ChaincodeSt
 	}
 	productid := args[1:]
 
-	// This will execute a key range query on all keys starting with 'Productid
-	transactionProductidResultIterator, err := stub.GetStateByPartialCompositeKey("Productid~Transactionid", productid)
+	// This will execute a key range query on all keys starting with 'ProductCode
+	transactionProductCodeResultIterator, err := stub.GetStateByPartialCompositeKey("ProductCode~OrderNo", productid)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-	defer transactionProductidResultIterator.Close()
+	defer transactionProductCodeResultIterator.Close()
 
 	bArrayMemberAlreadyWritten := false
 	var buffer bytes.Buffer
 	buffer.WriteString("[")
-	for transactionProductidResultIterator.HasNext() {
+	for transactionProductCodeResultIterator.HasNext() {
 		// Note that we don't get the value (2nd return variable), we'll just get the marble name from the composite key
-		queryResponse, err := transactionProductidResultIterator.Next()
+		queryResponse, err := transactionProductCodeResultIterator.Next()
 		if err != nil {
 			return shim.Error(err.Error())
 		}
@@ -114,7 +114,7 @@ func (t *SimpleChaincode) getProductTransactionByProductID(stub shim.ChaincodeSt
 		if err != nil {
 			return shim.Error("we cannot splitcompositekey")
 		}
-		if objectType != "Productid~Transactionid" {
+		if objectType != "ProductCode~OrderNo" {
 			return shim.Error("object is not we want %s" + productid[0])
 		}
 		transactionid := compositeKeyParts[len(compositeKeyParts)-1]

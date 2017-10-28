@@ -23,7 +23,7 @@ type User struct {
 }
 
 type UserLogin struct {
-	Userid   string `json:"userid"`
+	Userid   string `json:"IDNo"`
 	Username string `json:"username"`
 	Token    string `json:"token"`
 }
@@ -154,13 +154,13 @@ func (t *SimpleChaincode) WriteUser(stub shim.ChaincodeStubInterface, args []str
 
 //得到某一用户的所有资产详情
 //args[0] functionname string
-//args[1] userid string
+//args[1] IDNo string
 //args = []string {"getUserAsset", "1"}
 func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("0x0203 Enter in getUserAsset")
 
 
-	resp := t.getTransactionByUserID(stub, args)
+	resp := t.getTransactionByIDNo(stub, args)
 	if resp.Status != shim.OK {
 		return shim.Error("getUserAssetFailed")
 	}
@@ -169,17 +169,18 @@ func (t *SimpleChaincode) getUserAsset(stub shim.ChaincodeStubInterface, args []
 	if err != nil {
 		fmt.Println("marshal wrong")
 	}
+
 	fmt.Println(string(assetBytes))
 
 	return shim.Success(assetBytes)
 }
 
 //用户查询某机构购买的产品信息
-//args []string("getUserByproductid", "organizationid", "userid"}
+//args []string("getUserByproductid", "organizationid", "IDNo"}
 //return [{product1}, {product2}]
-func (t *SimpleChaincode) getUserOrgProductid(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("0x06 Enter in getUserByProductid")
-	resp := t.getTransactionByUserID(stub, args[1:])
+func (t *SimpleChaincode) getUserOrgProductCode(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("0x06 Enter in getUserByProductCode")
+	resp := t.getTransactionByIDNo(stub, args[1:])
 	if resp.Status != shim.OK {
 		return shim.Error("getUserAssetFailed")
 	}
@@ -206,12 +207,12 @@ func (t *SimpleChaincode) getUserOrgProductid(stub shim.ChaincodeStubInterface, 
 }
 
 //用户查询当下的所有产品
-//args []string{"getUserAllProduct", "userid"}
+//args []string{"getUserAllProduct", "IDNo"}
 //return product
 func (t *SimpleChaincode) getUserAllProduct(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("0x0204 Enter in GetUserAllProduct")
 
-	resp := t.getTransactionByUserID(stub, args)
+	resp := t.getTransactionByIDNo(stub, args)
 	if resp.Status != shim.OK {
 		return shim.Error("GetUserAllProduct")
 	}
@@ -255,10 +256,10 @@ func (t *SimpleChaincode) getUserAllProduct(stub shim.ChaincodeStubInterface, ar
 
 //TODO:
 //getAsset里面包含了user在机构的所有信息,这个地方是否有必要？
-//args []string{"getUserFromOrganizationAsset",  "organizationid", "userid"}
+//args []string{"getUserFromOrganizationAsset",  "organizationid", "IDNo"}
 func (t *SimpleChaincode) getUserFromOrganizationAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("0x05 Enter in getUserFromOrganizationAsset")
-	resp := t.getTransactionByUserID(stub, args[1:])
+	resp := t.getTransactionByIDNo(stub, args[1:])
 	if resp.Status != shim.OK {
 		return shim.Error("getTransactionByUserID")
 	}
