@@ -51,38 +51,6 @@ type Transaction struct {
 }
 
 
-//// 账本数据
-//type Transaction struct {
-//
-//	//交易头部
-//	SID               string `json:"SID"`
-//	ReceiverSID       string `json:"ReceiverSID"`
-//	OriginSID         string `json:"OriginSID"`
-//	RequestSerial     string `json:"RequestSerial"`
-//	NextRequestSerial string `json:"NextRequestSerial"`
-//	Proposaltime      int64  `json:"Proposaltime"`
-//	//交易ID,区块链中的索引
-//	OrderNo   string `json:"transactionid"`
-//	TransDate int64  `json:"transactiondate"`
-//	Parentorder     string `json:"parentorder"`
-//	Suborder        string `json:"suborder"`
-//	Payid           string `json:"payid"`
-//	//交易双方
-//	Transtype string `json:"transtype"`
-//	Fromtype  int    `json:"fromtype"`
-//	IDNo    string `json:"fromid"`
-//	Totype    int    `json:"totype"`
-//	Toid      string `json:"toid"`
-//	//实际内容
-//	ProductCode      string  `json:"productid"`
-//	Productinfo    string  `json:"productinfo"`
-//	OrganizationCode string  `json:"organizationid"`
-//	Amount         float64 `json:"amount"`
-//	Portion          float64 `json:"price"`
-//}
-
-
-
 
 //交易信息入链,创建索引信息
 //args[0] functionname string
@@ -181,7 +149,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 // args[0] functionname string
 // args[1] IDNo string
 func (t *SimpleChaincode) getTransactionByOrderNo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	fmt.Println("ex0302 getTransactionByID")
+	fmt.Println("ex0302 getTransactionByOrderNo")
 
 	var OrderNo string //交易ID
 	var transaction Transaction
@@ -199,7 +167,7 @@ func (t *SimpleChaincode) getTransactionByOrderNo(stub shim.ChaincodeStubInterfa
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-
+	fmt.Println(string(TransactionInfo))
 	return shim.Success(TransactionInfo)
 }
 

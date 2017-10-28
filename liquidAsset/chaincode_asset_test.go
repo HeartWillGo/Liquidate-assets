@@ -20,7 +20,6 @@ import (
 	"testing"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"encoding/json"
-	"../liquidAsset/*"
 )
 
 
@@ -94,9 +93,9 @@ func checkInvokeUser(t *testing.T, stub *shim.MockStub, args [][]byte, checkargs
 		fmt.Println("start test getUserAllProduct")
 		fmt.Println("getUserAllProduct", string(res.GetPayload()))
 
-	case "getTransactionByUserID" == string(args[1]):
-		fmt.Println("start test getTransactionByUserID")
-		fmt.Println("transactionByUserID", string(res.GetPayload()))
+	case "getTransactionByIDNo" == string(args[1]):
+		fmt.Println("start test getTransactionByIDNo")
+		fmt.Println("getTransactionByIDNo", string(res.GetPayload()))
 	case "getUserFromOrganizationAsset" == string(args[1]):
 		fmt.Println("start test getUserFromOrganizationAsset")
 		fmt.Println("getUserFromOrganizationAsset", string(res.GetPayload()))
@@ -114,12 +113,12 @@ func checkInvokeTransaction(t *testing.T, stub *shim.MockStub, args [][]byte, ch
 	switch {
 	case "Transaction" == string(args[1]):
 		fmt.Println("start Transaction")
-	case "getTransactionByID" == string(args[1]):
+	case "getTransactionByOrderNo" == string(args[1]):
 
 		if string(res.GetPayload()) != checkargs {
 			t.FailNow()
 		}else {
-			fmt.Println("getTransactionByID success")
+			fmt.Println("getTransactionByOrderNo success")
 		}
 
 	case "getTransactionByOrderNoRange" == string(args[1]):
@@ -214,9 +213,9 @@ func checkInvokeOrganization(t *testing.T, stub *shim.MockStub, args [][]byte, c
 
 
 func getALLToHyperledger(t *testing.T, stub *shim.MockStub){
-	Users := getUsers()
-	Products := getProducts()
-	Organizations := getOrganizations()
+	//Users := getUsers()
+	//Products := getProducts()
+	//Organizations := getOrganizations()
 	Transactions := getTrans()
 
 
@@ -228,36 +227,36 @@ func getALLToHyperledger(t *testing.T, stub *shim.MockStub){
 		}
 		trans_map[tran.OrderNo] = tranBytes
 		checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("Transaction"), tranBytes}, string(tranBytes))
-		checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByID"), []byte(tran.OrderNo)}, string(tranBytes))
+		checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByOrderNo"), []byte(tran.OrderNo)}, string(tranBytes))
 
 	}
-	for _, user := range Users  {
-		userBytes, err := json.Marshal(user)
-		if err != nil {
-			fmt.Println("marshal wrong")
-		}
-		checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("CreateUser"), userBytes}, string(userBytes))
-		checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUser"), []byte(user.ID)}, string(userBytes))
-	}
-
-	for _, product := range Products {
-		productBytes, err := json.Marshal(product)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-		checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("CreateProduct"), productBytes}, string(productBytes))
-		checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("getProduct"), []byte(product.ProductCode)}, string(productBytes))
-
-	}
-	for _, organization := range Organizations {
-		organizationBytes, err := json.Marshal(organization)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-		checkInvokeOrganization(t, stub, [][]byte{[]byte("invoke"), []byte("createOrganization"), organizationBytes}, string(organizationBytes))
-		checkInvokeOrganization(t, stub, [][]byte{[]byte("invoke"), []byte("getOrganization"), []byte(organization.OrganizationID)}, string(organizationBytes))
-
-	}
+	//for _, user := range Users  {
+	//	userBytes, err := json.Marshal(user)
+	//	if err != nil {
+	//		fmt.Println("marshal wrong")
+	//	}
+	//	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("CreateUser"), userBytes}, string(userBytes))
+	//	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUser"), []byte(user.ID)}, string(userBytes))
+	//}
+	//
+	//for _, product := range Products {
+	//	productBytes, err := json.Marshal(product)
+	//	if err != nil {
+	//		fmt.Println(err.Error())
+	//	}
+	//	checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("CreateProduct"), productBytes}, string(productBytes))
+	//	checkInvokeProduct(t, stub, [][]byte{[]byte("invoke"), []byte("getProduct"), []byte(product.ProductCode)}, string(productBytes))
+	//
+	//}
+	//for _, organization := range Organizations {
+	//	organizationBytes, err := json.Marshal(organization)
+	//	if err != nil {
+	//		fmt.Println(err.Error())
+	//	}
+	//	checkInvokeOrganization(t, stub, [][]byte{[]byte("invoke"), []byte("createOrganization"), organizationBytes}, string(organizationBytes))
+	//	checkInvokeOrganization(t, stub, [][]byte{[]byte("invoke"), []byte("getOrganization"), []byte(organization.OrganizationID)}, string(organizationBytes))
+	//
+	//}
 }
 
 
@@ -279,7 +278,7 @@ func TestUser (t *testing.T) {
 	getALLToHyperledger(t, stub)
 
 
-	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByUserID"),[]byte("00000000000022")} , string("w43"))
+	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByIDNo"),[]byte("03")} , string("w43"))
 	checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAsset"), []byte("00000000000022")}, string("1"))
 	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserAllProduct"), []byte("IDNo0")}, string(""))
 	//checkInvokeUser(t, stub, [][]byte{[]byte("invoke"), []byte("getUserOrgProductCode"),  []byte("pingan"), []byte("IDNo0")}, string(""))
@@ -299,7 +298,9 @@ func TestTransaction (t *testing.T) {
 
 
 
-	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByOrderNoRange"), []byte("transactionid0"),[]byte("transactionid4")}, string("1"))
+	checkInvokeTransaction(t, stub, [][]byte{[]byte("invoke"), []byte("getTransactionByOrderNoRange"),
+																[]byte("201710281640495473214732942839073347079911"),
+																[]byte("201710281640575473214732942839073347079911")}, string("1"))
 
 
 }
@@ -337,10 +338,8 @@ func TestOrganization (t *testing.T) {
 
 
 func TestGenerateDate(t *testing.T) {
-	generate_userData(9)
 	generate_transdata(9)
-	generate_productData(9)
-	generate_organizationData(9)
+
 }
 
 

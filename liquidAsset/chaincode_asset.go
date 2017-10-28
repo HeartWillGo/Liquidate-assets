@@ -51,60 +51,60 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	}
 	switch {
 
-	case args[0] == "CreateUser":
-		return t.CreateUser(stub, args)
-	case args[0] == "getUser":
-		return t.getUser(stub, args)
-	case args[0] == "getUserAsset":
-		fmt.Println("entering getuesrAsset")
-		return t.getUserAsset(stub, args)
-	case args[0] == "getUserOrgProductCode":
-		fmt.Println("entering getUserOrgProductCode")
-		return t.getUserOrgProductCode(stub, args)
-	case args[0] == "getUserAllProduct":
-		fmt.Println("entering getUserAllProduct")
-		return t.getUserAllProduct(stub, args)
-	case args[0] == "getUserFromOrganizationAsset":
-		fmt.Println("entering getUserFromOrganizationAsset")
-		return t.getUserFromOrganizationAsset(stub, args)
-	case args[0] == "WriteUser":
-		return t.WriteUser(stub, args)
-
-	case args[0] == "CreateProduct":
-		return t.CreateProduct(stub, args)
-	case args[0] == "getProduct":
-		return t.getProduct(stub, args)
-	case args[0] == "WriteProduct":
-		return t.WriteProduct(stub, args)
-	case args[0] == "getProductAsset":
-		return t.getProductAsset(stub, args)
-	case args[0] == "getProductAllUser":
-		return t.getProductAllUser(stub, args)
-	case args[0] == "getProductTransactionByProductID":
-		return t.getProductTransactionByProductID(stub, args)
-	case args[0] == "getProductOneUser":
-		return t.getProductOneUser(stub, args)
-
-	case args[0] == "createOrganization":
-		return t.createOrganization(stub, args)
-	case args[0] == "getOrganization":
-		return t.getOrganization(stub, args)
-	case args[0] == "WriteOrganization":
-		return t.WriteOrganization(stub, args)
-	case args[0] == "getTransactionByOrganizationCode":
-		return t.getTransactionByOrganizationCode(stub, args)
-	case args[0] == "getOrganizationProduct":
-		return t.getOrganizationProduct(stub, args)
-	case args[0] == "getOrganizationAsset":
-		return t.getOrganizationAsset(stub, args)
-	case args[0] == "getOrganizationUser":
-		return t.getOrganizationUser(stub, args)
+	//case args[0] == "CreateUser":
+	//	return t.CreateUser(stub, args)
+	//case args[0] == "getUser":
+	//	return t.getUser(stub, args)
+	//case args[0] == "getUserAsset":
+	//	fmt.Println("entering getuesrAsset")
+	//	return t.getUserAsset(stub, args)
+	//case args[0] == "getUserOrgProductCode":
+	//	fmt.Println("entering getUserOrgProductCode")
+	//	return t.getUserOrgProductCode(stub, args)
+	//case args[0] == "getUserAllProduct":
+	//	fmt.Println("entering getUserAllProduct")
+	//	return t.getUserAllProduct(stub, args)
+	//case args[0] == "getUserFromOrganizationAsset":
+	//	fmt.Println("entering getUserFromOrganizationAsset")
+	//	return t.getUserFromOrganizationAsset(stub, args)
+	//case args[0] == "WriteUser":
+	//	return t.WriteUser(stub, args)
+	//
+	//case args[0] == "CreateProduct":
+	//	return t.CreateProduct(stub, args)
+	//case args[0] == "getProduct":
+	//	return t.getProduct(stub, args)
+	//case args[0] == "WriteProduct":
+	//	return t.WriteProduct(stub, args)
+	//case args[0] == "getProductAsset":
+	//	return t.getProductAsset(stub, args)
+	//case args[0] == "getProductAllUser":
+	//	return t.getProductAllUser(stub, args)
+	//case args[0] == "getProductTransactionByProductID":
+	//	return t.getProductTransactionByProductID(stub, args)
+	//case args[0] == "getProductOneUser":
+	//	return t.getProductOneUser(stub, args)
+	//
+	//case args[0] == "createOrganization":
+	//	return t.createOrganization(stub, args)
+	//case args[0] == "getOrganization":
+	//	return t.getOrganization(stub, args)
+	//case args[0] == "WriteOrganization":
+	//	return t.WriteOrganization(stub, args)
+	//case args[0] == "getTransactionByOrganizationCode":
+	//	return t.getTransactionByOrganizationCode(stub, args)
+	//case args[0] == "getOrganizationProduct":
+	//	return t.getOrganizationProduct(stub, args)
+	//case args[0] == "getOrganizationAsset":
+	//	return t.getOrganizationAsset(stub, args)
+	//case args[0] == "getOrganizationUser":
+	//	return t.getOrganizationUser(stub, args)
 
 	case args[0] == "Transaction":
 		return t.Transaction(stub, args)
-	case args[0] == "getTransactionByID":
+	case args[0] == "getTransactionByOrderNo":
 		return t.getTransactionByOrderNo(stub, args)
-	case args[0] == "getTransactionByUserID":
+	case args[0] == "getTransactionByIDNo":
 		return t.getTransactionByIDNo(stub, args)
 	case args[0] == "getTransactionByOrderNoRange":
 		return t.getTransactionByOrderNoRange(stub, args)
