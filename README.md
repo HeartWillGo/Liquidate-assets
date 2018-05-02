@@ -216,6 +216,7 @@ response 参数:
 }
 ```
 ```
+
 writeUser #修改用户信息 
 request 参数: 
 args[0]：用户ID 
@@ -277,3 +278,5 @@ response 参数：
 “OrganizationID”： 
 “xxx”，”Portion”：”xxx”}
 ```
+
+# 微信：zp1570316775
